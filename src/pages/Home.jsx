@@ -1,516 +1,296 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Brain, SpellCheck, Calculator, Palette, PenTool,
-  Award, BookOpen, Shield, Globe, GraduationCap,
-  Star, ArrowRight, CheckCircle, Target, Zap,
-  Trophy, ChevronRight, Users, Play, Sparkles
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import Competitions from './Competitions';
+import About from './About';
+import Results from './Results';
+import Gallery from './Gallery';
+import Blog from './Blog';
+import FAQs from './FAQs';
+import Contact from './Contact';
+import Register from './Register';
 
-// ── Animated counter ──────────────────────────────────────────────────────────
-function Counter({ end, suffix = '' }) {
-  const [val, setVal] = useState(0);
-  const ref = useRef(null);
+const IMAGES = [
+  { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/1.02464a56.png', bg: '#F4845F', panel: '#F79B7F' },
+  { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/2.b977faab.png', bg: '#6BBF7A', panel: '#85CC92' },
+  { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/3.4df853b4.png', bg: '#E882B4', panel: '#ED9DC4' },
+  { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/4.4457fbce.png', bg: '#6EB5FF', panel: '#8DC4FF' },
+];
+
+export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
+  // Preload all 4 images on mount
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      observer.disconnect();
-      let start = 0;
-      const step = Math.ceil(end / 60);
-      const t = setInterval(() => {
-        start += step;
-        if (start >= end) { setVal(end); clearInterval(t); }
-        else setVal(start);
-      }, 20);
-    }, { threshold: 0.3 });
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [end]);
-  return <span ref={ref}>{val.toLocaleString()}{suffix}</span>;
-}
+    IMAGES.forEach((img) => {
+      const imageInstance = new Image();
+      imageInstance.src = img.src;
+    });
+  }, []);
 
-const competitions = [
-  { id: 'quiz', title: 'Quiz Competition', desc: 'Test general knowledge, logic & learning with live MCQs tailored to your class level.', icon: Brain, color: 'from-blue-500 to-indigo-600', light: 'bg-blue-50', iconColor: 'text-blue-600', tag: 'Knowledge' },
-  { id: 'spell-bee', title: 'Spell Bee Competition', desc: 'Build vocabulary, spelling confidence and language skills in a structured national format.', icon: SpellCheck, color: 'from-amber-400 to-orange-500', light: 'bg-amber-50', iconColor: 'text-amber-600', tag: 'Language' },
-  { id: 'math', title: 'Math Challenge', desc: 'Sharpen arithmetic speed and problem-solving logic through class-appropriate challenges.', icon: Calculator, color: 'from-emerald-400 to-teal-600', light: 'bg-emerald-50', iconColor: 'text-emerald-600', tag: 'Logic' },
-  { id: 'art-craft', title: 'Art & Craft Competition', desc: 'Showcase creativity through theme-based drawing and craft submissions online or by photo.', icon: Palette, color: 'from-pink-500 to-rose-600', light: 'bg-pink-50', iconColor: 'text-pink-600', tag: 'Creativity' },
-  { id: 'handwriting', title: 'Handwriting Competition', desc: 'Demonstrate neatness, precision and presentation style with live digital canvas writing.', icon: PenTool, color: 'from-violet-500 to-purple-600', light: 'bg-violet-50', iconColor: 'text-violet-600', tag: 'Fine Skills' },
-];
+  // Update isMobile state on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-const testimonials = [
-  { quote: "My daughter secured 2nd rank in the Spell Bee. Her spelling confidence has soared — she now reads the dictionary for fun!", parent: 'Mr. Rajeev Malhotra', student: 'Sneha Malhotra (Grade 5)', stars: 5, initials: 'RM', color: 'bg-blue-600' },
-  { quote: "The Art & Craft competition was so much fun! Receiving a physical certificate in the mail made her feel incredibly proud.", parent: 'Mrs. Evelyn Carter', student: 'Mia Carter (Grade 2)', stars: 5, initials: 'EC', color: 'bg-pink-600' },
-  { quote: "Transparent evaluation, great parent dashboard, and friendly support. My son won the Math Challenge — we are thrilled!", parent: 'Mrs. Sunita Deshmukh', student: 'Aditya (Grade 8)', stars: 5, initials: 'SD', color: 'bg-amber-500' },
-];
-
-export default function Home({ navigateTo, setSelectedComp }) {
-  const handleRegisterClick = (compName) => {
-    setSelectedComp(compName);
-    navigateTo('register');
+  // Handle slide transition with 650ms lock animation
+  const navigate = (direction) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    if (direction === 'next') {
+      setActiveIndex((prev) => (prev + 1) % 4);
+    } else {
+      setActiveIndex((prev) => (prev + 3) % 4);
+    }
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 650);
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="bg-[#070A13] text-white min-h-screen relative overflow-x-hidden">
+      {/* 1. Dynamic background glowing mesh blobs */}
+      <div 
+        className="absolute top-[80vh] left-[-10%] w-[500px] h-[500px] rounded-full blur-[160px] opacity-15 pointer-events-none transition-all duration-700" 
+        style={{ backgroundColor: IMAGES[activeIndex].bg }} 
+      />
+      <div 
+        className="absolute top-[180vh] right-[-10%] w-[500px] h-[500px] rounded-full blur-[160px] opacity-15 pointer-events-none transition-all duration-700" 
+        style={{ backgroundColor: IMAGES[activeIndex].panel }} 
+      />
+      <div 
+        className="absolute top-[320vh] left-[-15%] w-[600px] h-[600px] rounded-full blur-[180px] opacity-15 pointer-events-none transition-all duration-700" 
+        style={{ backgroundColor: IMAGES[activeIndex].bg }} 
+      />
+      <div 
+        className="absolute top-[480vh] right-[-15%] w-[600px] h-[600px] rounded-full blur-[180px] opacity-15 pointer-events-none transition-all duration-700" 
+        style={{ backgroundColor: IMAGES[activeIndex].panel }} 
+      />
+      <div 
+        className="absolute bottom-[80vh] left-[-10%] w-[500px] h-[500px] rounded-full blur-[160px] opacity-15 pointer-events-none transition-all duration-700" 
+        style={{ backgroundColor: IMAGES[activeIndex].bg }} 
+      />
 
-      {/* ── 1. HERO SECTION ──────────────────────────────────────────────────── */}
-      <section className="relative bg-gradient-to-br from-[#eef2ff] via-[#f5f0ff] to-[#fff7ed] overflow-hidden py-12 sm:py-16 xl:py-20 flex items-center">
-        {/* Soft blobs */}
-        <div className="absolute top-[-80px] right-[-80px] w-[500px] h-[500px] bg-indigo-200 rounded-full blur-[100px] opacity-50 pointer-events-none" />
-        <div className="absolute bottom-[-60px] left-[-60px] w-[400px] h-[400px] bg-amber-200 rounded-full blur-[80px] opacity-40 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-purple-200 rounded-full blur-[80px] opacity-30 pointer-events-none" />
+      {/* 2. Hero Section: ToonHub Carousel */}
+      <section 
+        id="hero"
+        className="relative w-full h-screen overflow-hidden"
+        style={{
+          backgroundColor: IMAGES[activeIndex].bg,
+          transition: 'background-color 650ms cubic-bezier(0.4, 0, 0.2, 1)',
+          fontFamily: "'Inter', sans-serif",
+        }}
+      >
+        <div className="relative w-full h-screen overflow-hidden">
+          {/* Grain overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              zIndex: 50,
+              opacity: 0.4,
+              backgroundSize: '200px 200px',
+              backgroundRepeat: 'repeat',
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`
+            }}
+          />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 xl:gap-16 items-center">
-
-            {/* ── LEFT: Text content ─────────────────────────────────────────── */}
-            <div className="xl:col-span-7 space-y-5 text-center xl:text-left order-2 xl:order-1">
-              {/* Badge */}
-              <div className="inline-flex items-center space-x-2 bg-white border border-indigo-200 shadow-sm px-4 py-2 rounded-full text-indigo-700 font-bold text-xs tracking-widest uppercase">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-                <span>onboreding Championships 2026</span>
-              </div>
-
-              {/* Headline */}
-              <div className="space-y-3">
-                <h1 className="font-poppins text-4xl sm:text-5xl xl:text-[46px] 2xl:text-[54px] font-black text-[#0f172a] leading-[1.15] tracking-tight">
-                  Online Competitions <br className="hidden sm:inline" />
-                  for School Students
-                  <span className="block mt-3 text-3xl sm:text-4xl xl:text-[38px] 2xl:text-[44px]">
-                    <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Learn, Compete </span>
-                    <span className="text-amber-500">&amp; Shine!</span>
-                  </span>
-                </h1>
-              </div>
-
-              <p className="text-slate-600 font-medium text-base sm:text-lg leading-relaxed max-w-xl mx-auto xl:mx-0">
-                Unlock potential across Academic Quizzes, Handwriting, Creative Art, Spelling bees, and Math challenges designed for Kindergarten to 10th Standard.
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start">
-                <button
-                  onClick={() => navigateTo('register')}
-                  className="bg-amber-500 hover:bg-amber-600 text-white font-extrabold py-4 px-10 rounded-2xl shadow-xl shadow-amber-400/30 active:scale-95 transition-all text-base tracking-wide focus:outline-none focus:ring-4 focus:ring-amber-300/50"
-                >
-                  Register Now
-                </button>
-                <button
-                  onClick={() => navigateTo('competitions')}
-                  className="flex items-center justify-center space-x-2 bg-white hover:bg-slate-50 text-slate-800 font-bold py-4 px-8 rounded-2xl border-2 border-slate-200 shadow-md active:scale-95 transition-all text-base focus:outline-none focus:ring-4 focus:ring-indigo-100"
-                >
-                  <BookOpen className="w-5 h-5 text-indigo-600" />
-                  <span>View Contests</span>
-                </button>
-              </div>
-
-              {/* Stats row */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-200/70 max-w-md mx-auto xl:mx-0">
-                <div className="text-center xl:text-left">
-                  <span className="block font-poppins font-black text-2xl text-[#0f172a]">KG–10th</span>
-                  <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">Eligibility</span>
-                </div>
-                <div className="text-center xl:text-left">
-                  <span className="block font-poppins font-black text-2xl text-indigo-600">100%</span>
-                  <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">Secure Online</span>
-                </div>
-                <div className="text-center xl:text-left">
-                  <span className="block font-poppins font-black text-2xl text-amber-500">Digital</span>
-                  <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">Certificates</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ── RIGHT: Visual panel ─────────────────────────────────────────── */}
-            <div className="xl:col-span-5 relative flex flex-col items-center gap-6 order-1 xl:order-2">
-              {/* 3D Student image */}
-              <div className="relative w-full max-w-lg">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-200/50 to-purple-200/50 rounded-[48px] blur-xl scale-105" />
-                <img
-                  src="/hero-students.png"
-                  alt="Happy school students celebrating"
-                  className="relative w-full rounded-[40px] drop-shadow-2xl"
-                />
-
-                {/* Floating awards badge — top left */}
-                <div className="absolute top-4 -left-4 bg-white rounded-2xl shadow-xl p-3 flex items-center space-x-3 border border-slate-100 animate-float hidden sm:flex">
-                  <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
-                    <Trophy className="w-5 h-5 fill-amber-500" />
-                  </div>
-                  <div>
-                    <span className="block font-poppins font-black text-xs text-blue-950">Awards &amp; Medals</span>
-                    <span className="block text-[9px] text-slate-400 font-semibold">For top position holders</span>
-                  </div>
-                </div>
-
-                {/* Floating participants badge — bottom right */}
-                <div className="absolute bottom-4 -right-4 bg-white rounded-2xl shadow-xl p-3 flex items-center space-x-3 border border-slate-100">
-                  <div className="flex -space-x-2">
-                    {['bg-blue-500', 'bg-pink-500', 'bg-amber-500', 'bg-emerald-500'].map((c, i) => (
-                      <div key={i} className={`w-7 h-7 rounded-full ${c} border-2 border-white flex items-center justify-center text-white text-[9px] font-black`}>
-                        {['A', 'S', 'M', 'R'][i]}
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <span className="block font-poppins font-black text-sm text-blue-950">50,000+</span>
-                    <span className="text-[10px] text-slate-400 font-semibold">Students enrolled</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── 2. COMPETITION CARDS SECTION ────────────────────────────────────── */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-indigo-50 rounded-full blur-3xl opacity-60 pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
-            <span className="inline-block text-[10px] font-black tracking-widest text-indigo-600 uppercase bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full">5 Exciting Contests</span>
-            <h2 className="font-poppins text-3xl sm:text-4xl font-black text-[#0f172a]">Explore Our Featured Competitions</h2>
-            <p className="text-slate-500 font-medium">Five curated categories designed for every type of young talent — KG to 10th Standard.</p>
+          {/* Giant ghost text "WELCOME" */}
+          <div
+            className="absolute inset-x-0 flex items-center justify-center pointer-events-none select-none uppercase font-black"
+            style={{
+              zIndex: 2,
+              top: '18%',
+              fontFamily: "'Anton', sans-serif",
+              fontSize: 'clamp(90px, 28vw, 380px)',
+              color: 'white',
+              opacity: 1,
+              lineHeight: 1,
+              letterSpacing: '-0.02em',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            WELCOME
           </div>
 
-          {/* Competition cards grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {competitions.map((comp) => {
-              const Icon = comp.icon;
+          {/* Carousel figurines */}
+          <div className="absolute inset-0" style={{ zIndex: 3 }}>
+            {IMAGES.map((img, i) => {
+              let role = 'back';
+              if (i === activeIndex) {
+                role = 'center';
+              } else if (i === (activeIndex + 3) % 4) {
+                role = 'left';
+              } else if (i === (activeIndex + 1) % 4) {
+                role = 'right';
+              }
+
+              let style = {};
+              if (role === 'center') {
+                style = {
+                  transform: `translateX(-50%) scale(${isMobile ? 1.25 : 1.68})`,
+                  filter: 'blur(0px)',
+                  opacity: 1,
+                  zIndex: 20,
+                  left: '50%',
+                  height: isMobile ? '60%' : '92%',
+                  bottom: isMobile ? '22%' : '0px',
+                };
+              } else if (role === 'left') {
+                style = {
+                  transform: 'translateX(-50%) scale(1)',
+                  filter: 'blur(2px)',
+                  opacity: 0.85,
+                  zIndex: 10,
+                  left: isMobile ? '20%' : '30%',
+                  height: isMobile ? '16%' : '28%',
+                  bottom: isMobile ? '32%' : '12%',
+                };
+              } else if (role === 'right') {
+                style = {
+                  transform: 'translateX(-50%) scale(1)',
+                  filter: 'blur(2px)',
+                  opacity: 0.85,
+                  zIndex: 10,
+                  left: isMobile ? '80%' : '70%',
+                  height: isMobile ? '16%' : '28%',
+                  bottom: isMobile ? '32%' : '12%',
+                };
+              } else {
+                style = {
+                  transform: 'translateX(-50%) scale(1)',
+                  filter: 'blur(4px)',
+                  opacity: 1,
+                  zIndex: 5,
+                  left: '50%',
+                  height: isMobile ? '13%' : '22%',
+                  bottom: isMobile ? '32%' : '12%',
+                };
+              }
+
               return (
                 <div
-                  key={comp.id}
-                  className="group relative bg-white rounded-3xl border border-slate-100 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden"
+                  key={i}
+                  className="absolute aspect-[0.6/1]"
+                  style={{
+                    ...style,
+                    transition: 'transform 650ms cubic-bezier(0.4, 0, 0.2, 1), filter 650ms cubic-bezier(0.4, 0, 0.2, 1), opacity 650ms cubic-bezier(0.4, 0, 0.2, 1), left 650ms cubic-bezier(0.4, 0, 0.2, 1), height 650ms cubic-bezier(0.4, 0, 0.2, 1), bottom 650ms cubic-bezier(0.4, 0, 0.2, 1)',
+                    willChange: 'transform, filter, opacity',
+                  }}
                 >
-                  {/* Top gradient bar */}
-                  <div className={`h-2 bg-gradient-to-r ${comp.color}`} />
-
-                  <div className="p-6 space-y-4">
-                    {/* Icon + Tag */}
-                    <div className="flex items-center justify-between">
-                      <div className={`w-12 h-12 ${comp.light} rounded-2xl flex items-center justify-center`}>
-                        <Icon className={`w-6 h-6 ${comp.iconColor}`} />
-                      </div>
-                      <span className={`text-[10px] uppercase font-black px-3 py-1 rounded-full ${comp.light} ${comp.iconColor}`}>{comp.tag}</span>
-                    </div>
-
-                    <div>
-                      <h3 className="font-poppins font-extrabold text-lg text-[#0f172a] group-hover:text-indigo-700 transition-colors leading-snug">{comp.title}</h3>
-                      <p className="text-sm text-slate-500 font-medium mt-2 leading-relaxed">{comp.desc}</p>
-                    </div>
-
-                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-2 rounded-xl">
-                      <Target className="w-3.5 h-3.5" />
-                      <span>Eligibility: KG to 10th Standard</span>
-                    </div>
-                  </div>
-
-                  {/* Action row */}
-                  <div className="px-6 pb-6 flex gap-3">
-                    <button
-                      onClick={() => handleRegisterClick(comp.title)}
-                      className={`flex-1 bg-gradient-to-r ${comp.color} text-white font-bold py-3 rounded-2xl hover:opacity-90 active:scale-95 transition-all text-xs tracking-wide shadow-md`}
-                    >
-                      Register Now
-                    </button>
-                    <button
-                      onClick={() => navigateTo('competitions')}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-600 p-3 rounded-2xl active:scale-95 transition-all group-hover:bg-indigo-50 group-hover:text-indigo-600"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <img
+                    src={img.src}
+                    alt={`Toon figurine ${i + 1}`}
+                    className="w-full h-full object-contain object-bottom select-none"
+                    draggable="false"
+                  />
                 </div>
               );
             })}
+          </div>
 
-            {/* CTA Card */}
-            <div className="relative bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900 rounded-3xl p-8 flex flex-col justify-between text-white overflow-hidden shadow-xl">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
-              <div>
-                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-5">
-                  <Zap className="w-6 h-6 text-amber-400" />
-                </div>
-                <h3 className="font-poppins font-black text-xl leading-snug mb-3">Ready to Compete?</h3>
-                <p className="text-indigo-200 text-sm font-medium leading-relaxed">Register in 2 minutes and start your journey to becoming a national champion.</p>
-              </div>
+          {/* Bottom-left text + nav buttons */}
+          <div
+            className="absolute bottom-6 left-4 sm:bottom-20 sm:left-24 text-white"
+            style={{ zIndex: 60, maxWidth: '320px' }}
+          >
+            <p
+              className="font-bold uppercase tracking-widest mb-2 sm:mb-3 text-base sm:text-[22px]"
+              style={{ letterSpacing: '0.02em', opacity: 0.95 }}
+            >
+              TOONHUB FIGURINES
+            </p>
+            <p
+              className="hidden sm:block text-xs sm:text-sm mb-4 sm:mb-5"
+              style={{ opacity: 0.85, lineHeight: 1.6 }}
+            >
+              The artwork is stunning, shipped fully prepared. The finish is a vision, the 3D craft is flawless. Many thanks! Wishing you the win. Order now.
+            </p>
+            <div className="flex items-center gap-3">
               <button
-                onClick={() => navigateTo('register')}
-                className="mt-6 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black py-3.5 rounded-2xl active:scale-95 transition-all text-sm tracking-wide flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/30"
+                onClick={() => navigate('prev')}
+                className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-white flex items-center justify-center text-white transition-all duration-150 hover:scale-108 hover:bg-white/12 active:scale-95 cursor-pointer focus:outline-none"
+                aria-label="Previous figurine"
               >
-                <span>Start Today — It's Free</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowLeft size={26} strokeWidth={2.25} />
+              </button>
+              <button
+                onClick={() => navigate('next')}
+                className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-white flex items-center justify-center text-white transition-all duration-150 hover:scale-108 hover:bg-white/12 active:scale-95 cursor-pointer focus:outline-none"
+                aria-label="Next figurine"
+              >
+                <ArrowRight size={26} strokeWidth={2.25} />
               </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── 3. STATS SECTION ────────────────────────────────────────────────── */}
-      <section className="py-24 bg-gradient-to-br from-indigo-900 via-blue-950 to-purple-950 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, #6366f1 0%, transparent 50%), radial-gradient(circle at 75% 75%, #a855f7 0%, transparent 50%)' }} />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16 space-y-3">
-            <span className="text-[10px] font-black tracking-widest text-amber-400 uppercase bg-white/5 border border-white/10 px-4 py-1.5 rounded-full inline-block">Our Impact</span>
-            <h2 className="font-poppins text-3xl sm:text-4xl font-black text-white">Numbers That Speak for Themselves</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { val: 50000, suffix: '+', label: 'Happy Participants', color: 'text-amber-400', desc: 'Active student learners', icon: Users },
-              { val: 15, suffix: '+', label: 'Countries Reached', color: 'text-indigo-300', desc: 'Global peer network', icon: Globe },
-              { val: 250, suffix: '+', label: 'Awards Given', color: 'text-emerald-400', desc: 'Physical & e-credentials', icon: Trophy },
-              { val: 100, suffix: '%', label: 'Skill Enhancement', color: 'text-pink-400', desc: 'Proven cognitive progress', icon: Zap },
-            ].map((s, i) => {
-              const Icon = s.icon;
-              return (
-                <div key={i} className="bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-3xl text-center space-y-3 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
-                  <div className="mx-auto w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <span className={`block font-poppins font-black text-3xl sm:text-4xl ${s.color}`}>
-                      <Counter end={s.val} suffix={s.suffix} />
-                    </span>
-                    <span className="block text-xs font-bold text-slate-100 tracking-wide mt-1">{s.label}</span>
-                    <span className="block text-[10px] text-slate-400 font-semibold mt-0.5">{s.desc}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 4. WHY CHOOSE US ────────────────────────────────────────────────── */}
-      <section className="py-24 bg-[#f8fafc]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
-            <span className="text-[10px] font-black tracking-widest text-indigo-600 uppercase bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full inline-block">Our Value</span>
-            <h2 className="font-poppins text-3xl sm:text-4xl font-black text-[#0f172a]">Why Students &amp; Parents Choose onboreding</h2>
-            <p className="text-slate-500 font-medium">We design competitions that inspire rather than intimidate — making learning joyful and rewarding.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { icon: <BookOpen className="w-7 h-7 text-indigo-600" />, bg: 'bg-indigo-50 border-indigo-100', title: 'Skill-First Pedagogy', desc: 'Every challenge is reviewed by pedagogy experts to support cognitive learning across grammar, math fluency, and creativity.' },
-              { icon: <Shield className="w-7 h-7 text-amber-600" />, bg: 'bg-amber-50 border-amber-100', title: 'Zero Bias Evaluation', desc: 'Every handwriting sample, art sketch, or quiz answer undergoes careful double-blind evaluation for 100% fair results.' },
-              { icon: <Globe className="w-7 h-7 text-emerald-600" />, bg: 'bg-emerald-50 border-emerald-100', title: 'Global Peer Benchmark', desc: 'Compete safely from home alongside students from 15+ countries, building global academic awareness and confidence.' },
-            ].map((b, i) => (
-              <div key={i} className="bg-white border border-slate-100 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-5">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border ${b.bg}`}>{b.icon}</div>
-                <h3 className="font-poppins font-bold text-lg text-[#0f172a]">{b.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed font-medium">{b.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 5. FIND YOUR TRIBE (Community) ──────────────────────────────────── */}
-      <section className="relative overflow-hidden py-0">
-        <div className="relative bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#1e3a8a] text-white">
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(ellipse at 60% 50%, #6366f1 0%, transparent 60%)' }} />
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Text */}
-              <div className="space-y-7 text-center lg:text-left">
-                <div className="inline-flex items-center space-x-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">
-                  <Users className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Student Community</span>
-                </div>
-                <h2 className="font-poppins font-black text-4xl sm:text-5xl leading-tight text-white">
-                  Find Your Tribe,<br />
-                  <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">Build Your Network.</span>
-                </h2>
-                <p className="text-indigo-200 font-medium text-base leading-relaxed max-w-md mx-auto lg:mx-0">
-                  Connect with like-minded students across India and the world. Share preparation tips, celebrate wins, and make friends who love learning.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <button
-                    onClick={() => navigateTo('register')}
-                    className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold py-4 px-8 rounded-2xl shadow-xl shadow-amber-500/30 active:scale-95 transition-all text-sm tracking-wide flex items-center justify-center space-x-2"
-                  >
-                    <Play className="w-4 h-4 fill-slate-900" />
-                    <span>Join for Free</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => navigateTo('competitions')}
-                    className="flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-4 px-8 rounded-2xl active:scale-95 transition-all text-sm"
-                  >
-                    <span>Explore Competitions</span>
-                  </button>
-                </div>
-              </div>
-              {/* Visual: student avatars mosaic */}
-              <div className="flex justify-center">
-                <div className="relative w-full max-w-sm">
-                  {/* Large center circle */}
-                  <div className="w-64 h-64 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-2xl shadow-amber-500/30 relative">
-                    <div className="text-center space-y-2 p-4">
-                      <Trophy className="w-16 h-16 text-white mx-auto" />
-                      <span className="block font-poppins font-black text-white text-lg">Champions</span>
-                      <span className="text-white/80 text-xs font-semibold">From KG to Grade 10</span>
-                    </div>
-                    {/* Orbiting avatars */}
-                    {[
-                      { bg: 'bg-blue-500', init: 'A', style: { top: '-16px', left: '50%', transform: 'translateX(-50%)' } },
-                      { bg: 'bg-pink-500', init: 'S', style: { top: '50%', right: '-16px', transform: 'translateY(-50%)' } },
-                      { bg: 'bg-violet-500', init: 'M', style: { bottom: '-16px', left: '50%', transform: 'translateX(-50%)' } },
-                      { bg: 'bg-emerald-500', init: 'R', style: { top: '50%', left: '-16px', transform: 'translateY(-50%)' } },
-                      { bg: 'bg-amber-500', init: 'K', style: { top: '15%', right: '15%' } },
-                      { bg: 'bg-rose-500', init: 'P', style: { bottom: '15%', right: '15%' } },
-                    ].map((a, i) => (
-                      <div key={i} className={`absolute w-12 h-12 ${a.bg} rounded-full border-4 border-white flex items-center justify-center text-white font-black text-sm shadow-xl`} style={a.style}>
-                        {a.init}
-                      </div>
-                    ))}
-                  </div>
-                  {/* Floating badges */}
-                  <div className="absolute top-0 -left-6 bg-white rounded-2xl shadow-xl p-3 text-center">
-                    <span className="block font-poppins font-black text-base text-indigo-900">15+</span>
-                    <span className="text-[10px] text-slate-500 font-semibold">Countries</span>
-                  </div>
-                  <div className="absolute bottom-0 -right-4 bg-white rounded-2xl shadow-xl p-3 text-center">
-                    <span className="block font-poppins font-black text-base text-amber-600">50K+</span>
-                    <span className="text-[10px] text-slate-500 font-semibold">Students</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 6. CERTIFICATIONS ───────────────────────────────────────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Texts */}
-            <div className="space-y-7 text-center lg:text-left">
-              <span className="text-[10px] font-black tracking-widest text-indigo-600 uppercase bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full inline-block">Be Certified</span>
-              <h2 className="font-poppins text-3xl sm:text-4xl font-black text-[#0f172a]">Earn Recognized Digital &amp; Physical Certificates</h2>
-              <p className="text-slate-500 font-medium leading-relaxed">Every child is celebrated! onboreding provides a range of recognition awards based on ranking.</p>
-              <div className="space-y-5">
-                {[
-                  { title: 'National Rank Certificates', desc: 'Top 3 scorers receive physical trophies, gold medals, and special rank profiles.', color: 'bg-amber-100 text-amber-600' },
-                  { title: 'Excellence Certificates', desc: 'Students achieving 85%+ receive certificates validating their outstanding expertise.', color: 'bg-indigo-100 text-indigo-600' },
-                  { title: 'Participation Certificates', desc: 'Every registrant gets a beautiful digital participation credential.', color: 'bg-emerald-100 text-emerald-600' },
-                ].map((c, i) => (
-                  <div key={i} className="flex items-start space-x-4">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${c.color}`}>
-                      <CheckCircle className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-poppins font-bold text-sm text-[#0f172a]">{c.title}</h4>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5 leading-relaxed">{c.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Certificate card mockup */}
-            <div className="flex justify-center">
-              <div className="w-full max-w-sm bg-white border-2 border-amber-400 rounded-3xl p-8 shadow-2xl relative overflow-hidden hover:scale-[1.02] transition-transform duration-300">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-400/10 rounded-full blur-xl" />
-                <div className="text-center space-y-5 border-2 border-slate-100 rounded-2xl p-6 bg-white relative z-10">
-                  <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto relative">
-                    <GraduationCap className="w-7 h-7 text-blue-900" />
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-400 text-white text-xs rounded-full flex items-center justify-center border-2 border-white">
-                      <Star className="w-3 h-3 fill-white text-white" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-poppins font-black text-base text-blue-950 tracking-wide">onboreding Certificate</h3>
-                    <span className="text-[9px] text-indigo-600 font-black tracking-widest uppercase">Of Academic Accomplishment</span>
-                  </div>
-                  <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Proudly Conferred To</p>
-                  <h4 className="font-poppins text-xl font-extrabold text-blue-900 italic">Master Rohan Sharma</h4>
-                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-                    for securing <span className="text-amber-500 font-bold">1st Rank</span> in the National Quiz Championship (Grade 4)
-                    with an evaluation score of <span className="text-indigo-600 font-bold">98.5%</span>.
-                  </p>
-                  <div className="flex justify-between items-center text-[9px] border-t border-slate-100 pt-4 text-slate-400">
-                    <div><span className="block text-slate-700 font-bold font-poppins">Dr. Amanda Pierce</span><span>Chief Academic Judge</span></div>
-                    <div><span className="block text-slate-700 font-bold font-poppins">onboreding Org.</span><span>OB-9028-4F</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 7. TESTIMONIALS ─────────────────────────────────────────────────── */}
-      <section className="py-24 bg-[#f8fafc]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
-            <span className="text-[10px] font-black tracking-widest text-indigo-600 uppercase bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full inline-block">Parent Reviews</span>
-            <h2 className="font-poppins text-3xl sm:text-4xl font-black text-[#0f172a]">What Families Say About Us</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <div key={i} className="bg-white border border-slate-100 p-8 rounded-3xl shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-5 relative overflow-hidden group">
-                {/* Backdrop Quote Icon */}
-                <div className="absolute right-6 top-4 text-slate-100 text-7xl font-serif select-none pointer-events-none group-hover:text-indigo-50/70 transition-colors duration-300">
-                  “
-                </div>
-                <div className="flex space-x-1 relative z-10">
-                  {[...Array(t.stars)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-slate-600 italic text-sm leading-relaxed font-semibold relative z-10">"{t.quote}"</p>
-                <div className="flex items-center space-x-3 pt-4 border-t border-slate-100 relative z-10">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-poppins font-black text-sm text-white ${t.color}`}>
-                    {t.initials}
-                  </div>
-                  <div>
-                    <span className="block text-sm font-bold text-blue-950 font-poppins">{t.parent}</span>
-                    <span className="block text-[11px] text-slate-400 font-medium">{t.student}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 8. FINAL CTA BANNER ─────────────────────────────────────────────── */}
-      <section className="py-24 bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 relative overflow-hidden text-white text-center">
-        {/* Soft background light */}
-        <div className="absolute top-0 left-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8">
-          <div className="inline-flex items-center space-x-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase text-amber-400">
-            <Trophy className="w-4 h-4" />
-            <span>Join 50,000+ Enrolled Students</span>
-          </div>
-          <h2 className="font-poppins text-3xl sm:text-5xl font-black leading-tight text-white flex flex-wrap items-center justify-center gap-3">
-            <span>Ready to Help Your Child Shine?</span>
-            <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400 animate-pulse inline" />
-          </h2>
-          <p className="text-slate-300 font-medium text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-            Registration takes just 2 minutes! Choose a competition, fill in details, and access preparation worksheets instantly.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-            <button
-              onClick={() => navigateTo('register')}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold py-4 px-10 rounded-2xl shadow-xl shadow-amber-500/20 active:scale-95 transition-all text-base tracking-wide flex items-center justify-center space-x-2 focus:outline-none focus:ring-4 focus:ring-amber-300/50"
+          {/* Bottom-right link "DISCOVER IT" */}
+          <div
+            className="absolute bottom-6 right-4 sm:bottom-20 sm:right-10"
+            style={{ zIndex: 60 }}
+          >
+            <a
+              href="#/competitions"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('competitions');
+              }}
+              className="flex items-center gap-2 sm:gap-3 text-white transition-opacity duration-200 cursor-pointer animate-pulse"
+              style={{
+                fontFamily: "'Anton', sans-serif",
+                fontSize: 'clamp(20px, 4vw, 56px)',
+                fontWeight: 400,
+                opacity: 0.95,
+                letterSpacing: '-0.02em',
+                lineHeight: 1,
+                textDecoration: 'none'
+              }}
             >
-              <Zap className="w-5 h-5 text-white fill-white" />
-              <span>Start Registration — Free</span>
-            </button>
-            <button
-              onClick={() => navigateTo('competitions')}
-              className="flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-4 px-8 rounded-2xl active:scale-95 transition-all text-base focus:outline-none focus:ring-4 focus:ring-white/10"
-            >
-              Browse All Competitions
-            </button>
+              <span>DISCOVER IT</span>
+              <ArrowRight className="w-5 h-5 sm:w-8 sm:h-8" strokeWidth={2.25} />
+            </a>
           </div>
         </div>
       </section>
 
+      {/* 3. Sections Container */}
+      <div className="relative z-10">
+        <section id="competitions" className="border-t border-white/[0.05]">
+          <Competitions navigateTo={navigateTo} setSelectedComp={setSelectedComp} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+
+        <section id="about" className="border-t border-white/[0.05]">
+          <About navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+
+        <section id="results" className="border-t border-white/[0.05]">
+          <Results navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+
+        <section id="gallery" className="border-t border-white/[0.05]">
+          <Gallery navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+
+        <section id="blog" className="border-t border-white/[0.05]">
+          <Blog navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+
+        <section id="faqs" className="border-t border-white/[0.05]">
+          <FAQs navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+
+        <section id="contact" className="border-t border-white/[0.05]">
+          <Contact navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+
+        <section id="register" className="border-t border-white/[0.05] pb-20">
+          <Register navigateTo={navigateTo} selectedComp={selectedComp} setSelectedComp={setSelectedComp} activeFigurineBg={IMAGES[activeIndex].bg} />
+        </section>
+      </div>
     </div>
   );
 }

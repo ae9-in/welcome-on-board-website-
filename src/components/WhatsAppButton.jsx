@@ -5,7 +5,7 @@ export default function WhatsAppButton() {
   const [showPopup, setShowPopup] = useState(false);
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([
-    { sender: 'agent', text: 'Hi there! Welcome to onboreding.' },
+    { sender: 'agent', text: 'Hi there! Welcome to OnBoarding.' },
     { sender: 'agent', text: 'Have questions about registrations or competition rules? Type below to chat on WhatsApp!' }
   ]);
 
@@ -54,7 +54,7 @@ export default function WhatsAppButton() {
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"></div>
               </div>
               <div>
-                <h4 className="font-poppins font-bold text-sm leading-tight text-white">onboreding Help Desk</h4>
+                <h4 className="font-poppins font-bold text-sm leading-tight text-white">OnBoarding Help Desk</h4>
                 <span className="text-[10px] text-slate-300 font-medium">Online • Responds Instantly</span>
               </div>
             </div>

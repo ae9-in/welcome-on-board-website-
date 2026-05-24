@@ -34,10 +34,9 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
     'Art & Craft Competition', 'Handwriting Competition',
   ];
 
-  // Route competition name → page id
   const compToRoute = {
     'Quiz Competition': 'quiz',
-    'Spell Bee Competition': 'quiz',
+    'Spell Bee Competition': 'spellbee',
     'Math Challenge': 'quiz',
     'Art & Craft Competition': 'art-craft',
     'Handwriting Competition': 'handwriting',
@@ -74,9 +73,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      // Save student name for results page
       localStorage.setItem('onboreding_student_name', formData.studentName);
-      // Save registration
       const regs = JSON.parse(localStorage.getItem('onboreding_registrations') || '[]');
       const refNo = 'REG-' + Math.floor(100000 + Math.random() * 900000);
       regs.unshift({ ...formData, refNo, date: new Date().toISOString() });
@@ -99,35 +96,32 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
     navigateTo('competitions');
   };
 
-
   return (
-    <div className="bg-slate-50 py-16 text-left">
+    <div className="bg-[#F6F7FA] py-20 text-left min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center space-y-4 mb-16">
-          <div className="inline-flex items-center space-x-2 bg-amber-100 border border-amber-200 px-4 py-1.5 rounded-full text-amber-900 font-bold text-xs tracking-wide">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+          <div className="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-200 px-4 py-1.5 rounded-full text-indigo-700 font-bold text-xs tracking-wide">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600 fill-indigo-600" />
             <span>Championship Open Enrollment</span>
           </div>
-          <h1 className="font-poppins text-3xl sm:text-4xl lg:text-5xl font-black text-blue-950">
+          <h2 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-medium leading-[0.95] tracking-tighter text-[#030213]">
             Contest Registration
-          </h1>
-          <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed max-w-lg mx-auto">
+          </h2>
+          <p className="text-sm text-slate-600 font-semibold leading-relaxed max-w-lg mx-auto">
             Fill in the details below to secure your spot. Instantly unlock free printable preparation guides upon successful submission.
           </p>
         </div>
 
         {/* Form panel */}
-        <div className="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-xl relative overflow-hidden">
-          {/* Background graphics */}
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-400/5 rounded-full blur-xl"></div>
+        <div className="bg-white border border-black/10 rounded-[2rem] p-8 shadow-xl shadow-slate-900/5 relative overflow-hidden">
           
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* Student Name */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                 Student Name
               </label>
               <input
@@ -136,14 +130,14 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                 value={formData.studentName}
                 onChange={handleChange}
                 placeholder="Enter student's full name"
-                className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border ${
+                className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 placeholder-slate-400 font-semibold border ${
                   errors.studentName 
-                    ? 'border-red-400 focus:ring-red-200' 
-                    : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                    ? 'border-red-500 focus:ring-red-500/20' 
+                    : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
               {errors.studentName && (
-                <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                   <AlertCircle className="w-3.5 h-3.5 mr-1" />
                   {errors.studentName}
                 </span>
@@ -152,7 +146,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
 
             {/* Parent Name */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                 Parent / Guardian Name
               </label>
               <input
@@ -161,14 +155,14 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                 value={formData.parentName}
                 onChange={handleChange}
                 placeholder="Enter parent's full name"
-                className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border ${
+                className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 placeholder-slate-400 font-semibold border ${
                   errors.parentName 
-                    ? 'border-red-400 focus:ring-red-200' 
-                    : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                    ? 'border-red-500 focus:ring-red-500/20' 
+                    : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
               {errors.parentName && (
-                <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                   <AlertCircle className="w-3.5 h-3.5 mr-1" />
                   {errors.parentName}
                 </span>
@@ -179,7 +173,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
               
               {/* Email */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                   Email Address
                 </label>
                 <input
@@ -188,14 +182,14 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="E.g. parent@email.com"
-                  className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border ${
+                  className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 placeholder-slate-400 font-semibold border ${
                     errors.email 
-                      ? 'border-red-400 focus:ring-red-200' 
-                      : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                      ? 'border-red-500 focus:ring-red-500/20' 
+                      : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                   }`}
                 />
                 {errors.email && (
-                  <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                  <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                     <AlertCircle className="w-3.5 h-3.5 mr-1" />
                     {errors.email}
                   </span>
@@ -204,7 +198,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
 
               {/* Phone */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                   Phone Number
                 </label>
                 <input
@@ -213,14 +207,14 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="E.g. +1 (555) 019-2834"
-                  className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border ${
+                  className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 placeholder-slate-400 font-semibold border ${
                     errors.phone 
-                      ? 'border-red-400 focus:ring-red-200' 
-                      : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                      ? 'border-red-500 focus:ring-red-500/20' 
+                      : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                   }`}
                 />
                 {errors.phone && (
-                  <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                  <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                     <AlertCircle className="w-3.5 h-3.5 mr-1" />
                     {errors.phone}
                   </span>
@@ -233,17 +227,17 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
               
               {/* Grade */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                   Grade / Class
                 </label>
                 <select
                   name="grade"
                   value={formData.grade}
                   onChange={handleChange}
-                  className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border font-semibold ${
+                  className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 border font-semibold [&>option]:bg-white [&>option]:text-slate-850 ${
                     errors.grade 
-                      ? 'border-red-400 focus:ring-red-200' 
-                      : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                      ? 'border-red-500 focus:ring-red-500/20' 
+                      : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                   }`}
                 >
                   <option value="">-- Choose Grade --</option>
@@ -252,7 +246,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                   ))}
                 </select>
                 {errors.grade && (
-                  <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                  <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                     <AlertCircle className="w-3.5 h-3.5 mr-1" />
                     {errors.grade}
                   </span>
@@ -261,17 +255,17 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
 
               {/* Competition selection */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">
                   Select Competition
                 </label>
                 <select
                   name="competition"
                   value={formData.competition}
                   onChange={handleChange}
-                  className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border font-semibold ${
+                  className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 border font-semibold [&>option]:bg-white [&>option]:text-slate-850 ${
                     errors.competition 
-                      ? 'border-red-400 focus:ring-red-200' 
-                      : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                      ? 'border-red-500 focus:ring-red-500/20' 
+                      : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                   }`}
                 >
                   <option value="">-- Choose Competition --</option>
@@ -280,7 +274,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                   ))}
                 </select>
                 {errors.competition && (
-                  <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                  <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                     <AlertCircle className="w-3.5 h-3.5 mr-1" />
                     {errors.competition}
                   </span>
@@ -291,8 +285,8 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
 
             {/* School Name */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center space-x-1">
-                <Landmark className="w-3.5 h-3.5 text-indigo-500" />
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center space-x-1.5">
+                <Landmark className="w-3.5 h-3.5 text-indigo-600" />
                 <span>School Name</span>
               </label>
               <input
@@ -301,14 +295,14 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                 value={formData.schoolName}
                 onChange={handleChange}
                 placeholder="Enter school full name"
-                className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border ${
+                className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 placeholder-slate-400 font-semibold border ${
                   errors.schoolName 
-                    ? 'border-red-400 focus:ring-red-200' 
-                    : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                    ? 'border-red-500 focus:ring-red-500/20' 
+                    : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
               {errors.schoolName && (
-                <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                   <AlertCircle className="w-3.5 h-3.5 mr-1" />
                   {errors.schoolName}
                 </span>
@@ -317,8 +311,8 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
 
             {/* Location */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center space-x-1">
-                <Map className="w-3.5 h-3.5 text-emerald-500" />
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center space-x-1.5">
+                <Map className="w-3.5 h-3.5 text-emerald-600" />
                 <span>City / State / Country</span>
               </label>
               <input
@@ -327,14 +321,14 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="E.g. Los Angeles, California, USA"
-                className={`w-full bg-slate-50 text-slate-700 py-3.5 px-4.5 rounded-2xl text-sm focus:outline-none focus:ring-2 border ${
+                className={`w-full bg-white text-slate-800 py-3.5 px-4.5 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 placeholder-slate-400 font-semibold border ${
                   errors.location 
-                    ? 'border-red-400 focus:ring-red-200' 
-                    : 'border-slate-200/80 focus:ring-blue-900/20 focus:border-blue-900'
+                    ? 'border-red-500 focus:ring-red-500/20' 
+                    : 'border-black/10 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
               {errors.location && (
-                <span className="flex items-center text-red-500 text-xs font-semibold mt-2.5">
+                <span className="flex items-center text-red-600 text-xs font-semibold mt-2.5">
                   <AlertCircle className="w-3.5 h-3.5 mr-1" />
                   {errors.location}
                 </span>
@@ -344,7 +338,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
             {/* Submit */}
             <button
               type="submit"
-              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:opacity-95 text-white font-extrabold py-4 px-6 rounded-2xl shadow-lg shadow-orange-500/25 active:scale-95 transition-all text-sm tracking-wider uppercase"
+              className="w-full flex items-center justify-center space-x-2 bg-[#030213] hover:bg-slate-800 text-white font-extrabold py-4 px-6 rounded-full shadow-md active:scale-95 transition-all text-xs sm:text-sm tracking-wider uppercase cursor-pointer"
             >
               <span>Submit Registration Form</span>
             </button>
@@ -354,51 +348,51 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
 
         {/* Success Modal Confirmation popup */}
         {submitted && regDetails && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full border-t-8 border-emerald-500 relative overflow-hidden p-6 text-center space-y-6 animate-bounce-slow">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-4 animate-fade-in">
+            <div className="bg-white rounded-[2.5rem] shadow-2xl max-w-md w-full border-[12px] border-black relative overflow-hidden p-6 text-center space-y-6 animate-scale-up">
               
-              <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 mx-auto shadow-inner">
+              <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto border border-emerald-200">
                 <CheckCircle className="w-10 h-10 animate-pulse" />
               </div>
 
-              <div className="space-y-1">
-                <h3 className="font-poppins font-black text-xl text-slate-900">Registration Success!</h3>
-                <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">
+              <div className="space-y-2">
+                <h3 className="font-poppins font-black text-xl text-[#030213]">Registration Success!</h3>
+                <span className="inline-block text-[10px] text-emerald-700 font-bold uppercase tracking-widest bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200">
                   Reference: {regDetails.refNo}
                 </span>
               </div>
 
               {/* Summary table details */}
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-xs font-semibold text-slate-600 space-y-3 text-left">
+              <div className="bg-[#F6F7FA] border border-black/10 rounded-2xl p-4 text-xs font-semibold text-slate-600 space-y-3 text-left">
                 <div className="flex justify-between">
                   <span>Student Name:</span>
-                  <span className="text-slate-900 font-bold">{regDetails.studentName}</span>
+                  <span className="text-[#030213] font-bold">{regDetails.studentName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Grade Level:</span>
-                  <span className="text-slate-900 font-bold">{regDetails.grade}</span>
+                  <span className="text-[#030213] font-bold">{regDetails.grade}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Competition:</span>
                   <span className="text-indigo-600 font-extrabold">{regDetails.competition}</span>
                 </div>
-                <div className="flex justify-between border-t border-slate-200/60 pt-2.5">
+                <div className="flex justify-between border-t border-black/5 pt-2.5">
                   <span>School:</span>
-                  <span className="text-slate-950 font-bold truncate max-w-[200px]">{regDetails.schoolName}</span>
+                  <span className="text-[#030213] font-bold truncate max-w-[200px]">{regDetails.schoolName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Location:</span>
-                  <span className="text-slate-950 font-bold truncate max-w-[200px]">{regDetails.location}</span>
+                  <span className="text-[#030213] font-bold truncate max-w-[200px]">{regDetails.location}</span>
                 </div>
               </div>
 
-              <p className="text-[11px] text-slate-400 font-medium">
+              <p className="text-[11px] text-slate-500 font-semibold">
                 Ready to compete? Click below to start your competition now!
               </p>
 
               <button
                 onClick={handleGoToComp}
-                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-indigo-600 to-blue-700 hover:opacity-95 text-white font-extrabold py-4 px-6 rounded-2xl transition-all active:scale-95 text-sm tracking-wider shadow-lg shadow-indigo-500/25"
+                className="w-full flex items-center justify-center space-x-2 bg-[#030213] hover:bg-slate-800 text-white font-extrabold py-4 px-6 rounded-full transition-all active:scale-95 text-xs sm:text-sm tracking-wider shadow-md cursor-pointer"
               >
                 <Brain className="w-5 h-5" />
                 <span>Start Competition Now</span>
@@ -407,7 +401,7 @@ export default function Register({ selectedComp, setSelectedComp, navigateTo }) 
 
               <button
                 onClick={handleCloseSuccess}
-                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-2xl transition-all active:scale-95 text-xs tracking-wider"
+                className="w-full bg-white border border-black/10 hover:bg-slate-50 text-slate-700 font-bold py-3 px-6 rounded-full transition-all active:scale-95 text-xs tracking-wider cursor-pointer"
               >
                 View All Competitions
               </button>

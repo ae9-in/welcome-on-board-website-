@@ -10,9 +10,10 @@ export default function Blog() {
       date: 'May 18, 2026',
       readTime: '5 min read',
       author: 'Dr. Amanda Pierce',
+      image: '/blog_spelling.png',
       icon: BookOpen,
-      iconColor: 'text-amber-600',
-      bgGradient: 'from-amber-100 to-orange-100',
+      iconColor: 'text-amber-650 text-amber-600',
+      bgGradient: 'from-amber-50 to-orange-100',
       content: `
 Spelling is one of the foundational stones of overall literacy. However, forcing children to copy down words 20 times is rarely the most effective cognitive tool. Instead, educational psychology suggests that contextual, active learning is far superior.
 
@@ -23,7 +24,7 @@ Encourage your children to break words down into phonemes (sound segments). Unde
 Play spelling bees during road trips, kitchen chores, or breakfast sessions. Make it light-hearted! Set up a dynamic score card on the refrigerator and reward spelling triumphs with reading tokens.
 
 ### 3. Read Together & Spot Errors
-During night-time stories, point out unusual spellings (like "knight" or "scent"). Ask children to write down words in print or cursive. onboreding provides custom vocabulary word banks that make spelling prep extremely interactive! Try them today.
+During night-time stories, point out unusual spellings (like "knight" or "scent"). Ask children to write down words in print or cursive. OnBoarding provides custom vocabulary word banks that make spelling prep extremely interactive! Try them today.
       `
     },
     {
@@ -33,11 +34,12 @@ During night-time stories, point out unusual spellings (like "knight" or "scent"
       date: 'May 14, 2026',
       readTime: '4 min read',
       author: 'Prof. Ronald Vance',
+      image: '/blog_math.png',
       icon: Calculator,
-      iconColor: 'text-blue-600',
-      bgGradient: 'from-blue-100 to-indigo-100',
+      iconColor: 'text-blue-650 text-blue-600',
+      bgGradient: 'from-blue-55 from-blue-50 to-indigo-100',
       content: `
-A fear of numbers (often referred to as math anxiety) usually stems from abstract drills that lack physical context. By introducing play and logic models, we can transform arithmetic concepts into thrilling riddles.
+Math doesn't have to be intimidating! By introducing play and logic models, we can transform arithmetic concepts into thrilling riddles.
 
 ### 1. The Grocery Estimator
 When shopping with your children, ask them to keep a mental total of items. For younger standard kids, focus on simple sums. For older grades, ask them to calculate discount percentages (e.g. 15% off $12).
@@ -56,9 +58,10 @@ Walk around the living room and challenge standard kids to find circles, trapezo
       date: 'May 10, 2026',
       readTime: '6 min read',
       author: 'Sonia Fernandez',
+      image: '/blog_handwriting.png',
       icon: PenTool,
-      iconColor: 'text-violet-600',
-      bgGradient: 'from-violet-100 to-purple-100',
+      iconColor: 'text-violet-650 text-violet-600',
+      bgGradient: 'from-violet-55 from-violet-50 to-purple-100',
       content: `
 With tablets and computers dominating modern primary classrooms, parents often ask: "Why focus on cursive or neat handwriting anymore?" Research in neuroscience shows that handwriting is far more than a physical tool; it is a critical cognitive accelerator.
 
@@ -77,16 +80,16 @@ In standard school exams, double-blind researchers note that clean, symmetrical 
   const [selectedPost, setSelectedPost] = useState(null);
 
   return (
-    <div className="bg-slate-50 py-16 text-left">
+    <div className="bg-[#F6F7FA] py-20 text-left min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
-          <span className="text-xs font-black tracking-widest text-indigo-600 uppercase font-poppins font-bold">onboreding Blogs</span>
-          <h1 className="font-poppins text-3xl sm:text-4xl lg:text-5xl font-black text-blue-950">
+          <span className="text-xs font-black tracking-widest text-indigo-650 text-indigo-600 uppercase font-poppins font-bold">OnBoarding Blogs</span>
+          <h2 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-medium leading-[0.95] tracking-tighter text-[#030213]">
             Educational Blogs & Guides
-          </h1>
-          <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
+          </h2>
+          <p className="text-sm text-slate-655 text-slate-600 font-semibold leading-relaxed">
             Discover modern tips, rules analysis, parent support checklists, and vocabulary learning advice curated by child development specialists.
           </p>
         </div>
@@ -96,52 +99,60 @@ In standard school exams, double-blind researchers note that clean, symmetrical 
           {blogPosts.map(post => (
             <div 
               key={post.id}
-              className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-lg hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+              className="bg-white border border-black/10 hover:border-black/20 rounded-[2rem] overflow-hidden hover:shadow-2xl hover:shadow-slate-900/10 transition-all duration-300 flex flex-col justify-between hover:scale-[1.015]"
             >
               <div>
                 {/* Graphics element */}
                 <div className={`h-48 bg-gradient-to-tr ${post.bgGradient} flex items-center justify-center relative overflow-hidden`}>
-                  <post.icon className={`w-16 h-16 ${post.iconColor} filter drop-shadow-md`} />
-                  <div className="absolute top-4 left-4 bg-white/40 backdrop-blur-md px-3 py-1 rounded-full text-[9px] text-slate-800 font-bold uppercase tracking-wider">
-                    onboreding Editorial
+                  {post.image ? (
+                    <img 
+                      src={post.image} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <post.icon className={`w-16 h-16 ${post.iconColor} filter drop-shadow-md`} />
+                  )}
+                  <div className="absolute top-4 left-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[9px] text-slate-800 border border-black/10 font-bold uppercase tracking-wider">
+                    OnBoarding Editorial
                   </div>
                 </div>
 
                 {/* Body details */}
                 <div className="p-6 space-y-4">
-                  <div className="flex items-center space-x-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                  <div className="flex items-center space-x-3 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                     <span className="flex items-center space-x-1">
-                      <Calendar className="w-3.5 h-3.5" />
+                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       <span>{post.date}</span>
                     </span>
                     <span>•</span>
                     <span className="flex items-center space-x-1">
-                      <Clock className="w-3.5 h-3.5" />
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
                       <span>{post.readTime}</span>
                     </span>
                   </div>
 
-                  <h3 className="font-poppins font-extrabold text-base sm:text-lg text-blue-950 leading-snug">
+                  <h3 className="font-poppins font-extrabold text-base sm:text-lg text-[#030213] leading-snug">
                     {post.title}
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                  <p className="text-xs text-slate-655 text-slate-600 font-semibold leading-relaxed">
                     {post.excerpt}
                   </p>
                 </div>
               </div>
 
               {/* Read button */}
-              <div className="p-6 pt-0 border-t border-slate-50 mt-4 flex items-center justify-between text-xs font-bold">
-                <span className="text-slate-500 font-bold flex items-center space-x-1">
+              <div className="p-6 pt-0 border-t border-black/5 mt-4 flex items-center justify-between text-xs font-bold">
+                <span className="text-slate-700 font-bold flex items-center space-x-1">
                   <User className="w-3.5 h-3.5 text-indigo-600" />
                   <span>{post.author}</span>
                 </span>
                 <button
                   onClick={() => setSelectedPost(post)}
-                  className="text-indigo-600 hover:text-indigo-850 flex items-center space-x-1 hover:underline"
+                  className="text-indigo-600 hover:text-indigo-805 hover:text-indigo-800 flex items-center space-x-1 hover:underline cursor-pointer"
                 >
                   <span>Read Article</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 font-black" />
                 </button>
               </div>
 
@@ -151,30 +162,30 @@ In standard school exams, double-blind researchers note that clean, symmetrical 
 
         {/* Dynamic Full Article Modal popup */}
         {selectedPost && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full border-t-8 border-indigo-900 relative overflow-hidden flex flex-col max-h-[85vh]">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md p-4 animate-fade-in">
+            <div className="bg-white rounded-[2.5rem] shadow-2xl max-w-2xl w-full border-[12px] border-black relative overflow-hidden flex flex-col max-h-[85vh] p-1 animate-scale-up">
               
               {/* Header Close button */}
-              <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <div className="flex items-center space-x-3 text-xs text-slate-400 font-bold">
-                  <span className="bg-indigo-900 text-white px-2 py-0.5 rounded font-black text-[9px]">ARTICLE</span>
+              <div className="p-5 border-b border-black/10 flex items-center justify-between bg-slate-50">
+                <div className="flex items-center space-x-3 text-xs text-slate-500 font-bold">
+                  <span className="bg-indigo-100 text-indigo-705 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded font-black text-[9px]">ARTICLE</span>
                   <span>{selectedPost.date}</span>
                   <span>•</span>
                   <span>{selectedPost.readTime}</span>
                 </div>
                 <button 
                   onClick={() => setSelectedPost(null)}
-                  className="bg-white border border-slate-200 text-slate-600 p-2 rounded-full active:scale-95 transition-all shadow-sm"
+                  className="bg-slate-100 border border-black/10 hover:bg-slate-200 text-slate-805 text-slate-800 p-2 rounded-full active:scale-95 transition-all shadow-sm cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Scrollable body */}
-              <div className="p-8 overflow-y-auto space-y-6">
+              <div className="p-8 overflow-y-auto space-y-6 text-slate-700 bg-white">
                 
                 {/* Title */}
-                <h2 className="font-poppins text-xl sm:text-2xl font-black text-blue-950 leading-tight">
+                <h2 className="font-poppins text-xl sm:text-2xl font-black text-[#030213] leading-tight">
                   {selectedPost.title}
                 </h2>
 
@@ -185,17 +196,17 @@ In standard school exams, double-blind researchers note that clean, symmetrical 
                 </div>
 
                 {/* Markdown format simulations */}
-                <div className="text-slate-600 text-xs sm:text-sm leading-relaxed font-semibold space-y-4 whitespace-pre-line border-t border-slate-100 pt-6">
+                <div className="text-slate-600 text-xs sm:text-sm leading-relaxed font-medium space-y-4 whitespace-pre-line border-t border-black/5 pt-6">
                   {selectedPost.content}
                 </div>
 
               </div>
 
               {/* Footer Close */}
-              <div className="p-5 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <div className="p-5 border-t border-black/10 bg-slate-50 flex justify-end">
                 <button
                   onClick={() => setSelectedPost(null)}
-                  className="bg-indigo-900 hover:bg-indigo-950 text-white font-extrabold py-2.5 px-6 rounded-xl text-xs tracking-wider uppercase"
+                  className="bg-[#030213] hover:bg-slate-800 text-white font-extrabold py-3 px-6 rounded-full text-xs tracking-wider uppercase active:scale-95 transition-all cursor-pointer"
                 >
                   Close Article
                 </button>

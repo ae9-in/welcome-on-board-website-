@@ -1,85 +1,86 @@
 import React from 'react';
 import { Target, Heart, Eye, Users, Award, ShieldCheck } from 'lucide-react';
 
-export default function About() {
+export default function About({ activeFigurineBg }) {
   const values = [
     {
       title: 'Inclusivity First',
       desc: 'Welcoming school students of all abilities from KG to 10th Standard across standard learning levels.',
-      icon: <Users className="w-6 h-6 text-blue-900" />,
-      bg: 'bg-blue-50 border-blue-100',
+      icon: <Users className="w-6 h-6 text-blue-400" />,
+      bg: 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04]',
     },
     {
       title: 'Healthy Joyful Learning',
       desc: 'Designing quizzes and tasks that focus on positive improvement and vocabulary gains rather than performance stress.',
-      icon: <Heart className="w-6 h-6 text-amber-500" />,
-      bg: 'bg-amber-50 border-amber-100',
+      icon: <Heart className="w-6 h-6 text-rose-405 text-rose-400" />,
+      bg: 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04]',
     },
     {
       title: 'Double-Blind Integrity',
       desc: 'Every art canvas and handwriting cursive worksheet undergoes dual evaluation by specialists to keep rankings unbiased.',
-      icon: <ShieldCheck className="w-6 h-6 text-emerald-500" />,
-      bg: 'bg-emerald-50 border-emerald-100',
+      icon: <ShieldCheck className="w-6 h-6 text-emerald-600" />,
+      bg: 'bg-white border border-black/10 hover:border-black/20',
     },
   ];
 
   const team = [
-    { name: 'Dr. Amanda Pierce', role: 'Chief Executive & Pedagogy Lead', spec: 'Ph.D. in Child Psychology', initials: 'AP', bg: 'bg-blue-100 text-blue-900 border-blue-200' },
-    { name: 'Prof. Ronald Vance', role: 'Chief Computational Math Arbitrator', spec: 'Ex-Olympiad Scholar', initials: 'RV', bg: 'bg-emerald-100 text-emerald-900 border-emerald-200' },
-    { name: 'Sonia Fernandez', role: 'Dean of Fine Arts & Design Events', spec: 'Fine Arts Director', initials: 'SF', bg: 'bg-pink-100 text-pink-900 border-pink-200' },
-    { name: 'Arthur Pendelton', role: 'Language Curator & Spelling Expert', spec: 'Linguistics Expert', initials: 'AP', bg: 'bg-amber-100 text-amber-900 border-amber-200' },
+    { name: 'Dr. Amanda Pierce', role: 'Chief Executive & Pedagogy Lead', spec: 'Ph.D. in Child Psychology', initials: 'AP', bg: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { name: 'Prof. Ronald Vance', role: 'Chief Computational Math Arbitrator', spec: 'Ex-Olympiad Scholar', initials: 'RV', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    { name: 'Sonia Fernandez', role: 'Dean of Fine Arts & Design Events', spec: 'Fine Arts Director', initials: 'SF', bg: 'bg-pink-50 text-pink-700 border-pink-200' },
+    { name: 'Arthur Pendelton', role: 'Language Curator & Spelling Expert', spec: 'Linguistics Expert', initials: 'AP', bg: 'bg-amber-50 text-amber-700 border-amber-200' },
   ];
 
   return (
-    <div className="bg-white">
+    <div className="bg-[#F6F7FA] py-20 text-left min-h-screen">
       {/* 1. INTRO / HEADER */}
-      <section className="relative overflow-hidden bg-slate-50 py-20">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-100/40 rounded-full blur-3xl"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
+      <section className="relative overflow-hidden mb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
           <span className="text-xs font-black tracking-widest text-indigo-600 uppercase font-poppins">Get to Know Us</span>
-          <h1 className="font-poppins text-3xl sm:text-4xl lg:text-5xl font-black text-blue-950">
+          <h2 className="font-poppins text-4xl sm:text-5xl lg:text-6xl font-medium leading-[0.95] tracking-tighter text-[#030213]">
             Inspiring the Next Generation of Achievers
-          </h1>
-          <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-500 font-medium leading-relaxed">
-            onboreding is a leading global online competition workspace designed to channel student competitive spirit into constructive learning and academic skill refinement.
+          </h2>
+          <p className="max-w-2xl mx-auto text-sm text-slate-600 font-semibold leading-relaxed">
+            OnBoarding is a leading global online competition workspace designed to channel student competitive spirit into constructive learning and academic skill refinement.
           </p>
         </div>
       </section>
 
       {/* 2. HISTORY / STORY */}
-      <section className="py-20">
+      <section className="mb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-6 space-y-6 text-left">
-              <h2 className="font-poppins text-3xl font-extrabold text-blue-950">
-                A Platform Built on Passion & Play
-              </h2>
-              <p className="text-slate-600 leading-relaxed font-medium">
-                onboreding was established in 2021 when a small team of educators noticed a lack of standardized online engagement during school recesses. Recognizing that children thrive under well-designed gamified goals, we built a secure platform dedicated exclusively to students from Kindergarten (KG) to 10th Standard.
-              </p>
-              <p className="text-slate-600 leading-relaxed font-medium">
-                Our initial event started with just 100 students in a local handwriting test. Today, we have successfully managed over 50,000 registrations globally, giving children the ability to compete against national cohorts from their living rooms.
-              </p>
-            </div>
+          <div className="bg-white border border-black/10 rounded-[2rem] p-8 sm:p-12 shadow-xl shadow-slate-900/5">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-6 space-y-6">
+                <h3 className="font-poppins text-3xl font-extrabold text-[#030213]">
+                  A Platform Built on Passion & Play
+                </h3>
+                <p className="text-slate-700 text-sm leading-relaxed font-semibold">
+                  OnBoarding was established in 2021 when a small team of educators noticed a lack of standardized online engagement during school recesses. Recognizing that children thrive under well-designed gamified goals, we built a secure platform dedicated exclusively to students from Kindergarten (KG) to 10th Standard.
+                </p>
+                <p className="text-slate-700 text-sm leading-relaxed font-semibold">
+                  Our initial event started with just 100 students in a local handwriting test. Today, we have successfully managed over 50,000 registrations globally, giving children the ability to compete against national cohorts from their living rooms.
+                </p>
+              </div>
 
-            <div className="lg:col-span-6 flex justify-center">
-              <div className="w-full max-w-md bg-gradient-to-tr from-indigo-900 to-blue-900 rounded-3xl p-8 text-white relative shadow-2xl overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
-                <h3 className="font-poppins font-black text-lg mb-4 text-white">onboreding Milestones</h3>
-                <div className="space-y-4">
-                  {[
-                    { year: '2021', title: 'Platform Inception', detail: 'Launched with a local handwriting and vocabulary contest.' },
-                    { year: '2023', title: '50,000+ Participants', detail: 'Expanded categories to cover standard arithmetic and crafts.' },
-                    { year: '2026', title: '15+ Countries Reached', detail: 'Recognized as a leading secure kid-friendly contest host.' }
-                  ].map((mile, idx) => (
-                    <div key={idx} className="flex space-x-4">
-                      <span className="font-poppins font-black text-xl text-amber-400">{mile.year}</span>
-                      <div className="text-left">
-                        <h4 className="font-bold text-sm text-white">{mile.title}</h4>
-                        <p className="text-xs text-slate-300 font-medium mt-0.5">{mile.detail}</p>
+              <div className="lg:col-span-6 flex justify-center">
+                <div className="w-full max-w-md bg-[#F6F7FA] rounded-[2rem] p-8 text-slate-800 relative shadow-md overflow-hidden border border-black/10">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl"></div>
+                  <h3 className="font-poppins font-black text-base mb-6 text-[#030213] tracking-wide">OnBoarding Milestones</h3>
+                  <div className="space-y-6">
+                    {[
+                      { year: '2021', title: 'Platform Inception', detail: 'Launched with a local handwriting and vocabulary contest.' },
+                      { year: '2023', title: '50,000+ Participants', detail: 'Expanded categories to cover standard arithmetic and crafts.' },
+                      { year: '2026', title: '15+ Countries Reached', detail: 'Recognized as a leading secure kid-friendly contest host.' }
+                    ].map((mile, idx) => (
+                      <div key={idx} className="flex space-x-4">
+                        <span className="font-poppins font-black text-xl text-indigo-600">{mile.year}</span>
+                        <div className="text-left">
+                          <h4 className="font-bold text-xs sm:text-sm text-[#030213]">{mile.title}</h4>
+                          <p className="text-xs text-slate-600 font-semibold mt-0.5">{mile.detail}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -88,46 +89,44 @@ export default function About() {
       </section>
 
       {/* 3. MISSION & VISION */}
-      <section className="py-20 bg-slate-50">
+      <section className="mb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Mission */}
-            <div className="bg-white border border-slate-100 p-8 rounded-3xl shadow-sm relative overflow-hidden flex flex-col justify-between">
-              <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-bl-3xl flex items-center justify-center font-bold">
-                <Target className="w-6 h-6 text-blue-900" />
+            <div className="bg-white border border-black/10 p-8 rounded-[2rem] shadow-xl shadow-slate-900/5 relative overflow-hidden flex flex-col justify-between transition-colors duration-300">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-3xl flex items-center justify-center font-bold">
+                <Target className="w-6 h-6 text-blue-600" />
               </div>
-              <div className="space-y-4 text-left">
-                <h3 className="font-poppins font-extrabold text-2xl text-blue-950">Our Mission</h3>
-                <p className="text-slate-600 text-sm leading-relaxed font-medium">
+              <div className="space-y-4">
+                <h3 className="font-poppins font-extrabold text-xl sm:text-2xl text-[#030213]">Our Mission</h3>
+                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed font-semibold">
                   To democratize student talent discovery by offering structured, accessible, and high-quality online contests that motivate children to enhance their spellings, logic, arithmetic speed, fine-motor styles, and artistic thinking in a happy learning framework.
                 </p>
               </div>
             </div>
 
             {/* Vision */}
-            <div className="bg-white border border-slate-100 p-8 rounded-3xl shadow-sm relative overflow-hidden flex flex-col justify-between">
-              <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-bl-3xl flex items-center justify-center font-bold">
-                <Eye className="w-6 h-6 text-amber-500" />
+            <div className="bg-white border border-black/10 p-8 rounded-[2rem] shadow-xl shadow-slate-900/5 relative overflow-hidden flex flex-col justify-between transition-colors duration-300">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-amber-50 rounded-bl-3xl flex items-center justify-center font-bold">
+                <Eye className="w-6 h-6 text-amber-600" />
               </div>
-              <div className="space-y-4 text-left">
-                <h3 className="font-poppins font-extrabold text-2xl text-blue-950">Our Vision</h3>
-                <p className="text-slate-600 text-sm leading-relaxed font-medium">
+              <div className="space-y-4">
+                <h3 className="font-poppins font-extrabold text-xl sm:text-2xl text-[#030213]">Our Vision</h3>
+                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed font-semibold">
                   To become the world's most trusted, engaging, and transparent competitive educational ecosystem for young minds, bridging gaps between regional schools and empowering parents with diagnostic learning feedback.
                 </p>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
       {/* 4. CORE VALUES */}
-      <section className="py-20">
+      <section className="mb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
+          <div className="text-center max-w-2xl mx-auto space-y-4 mb-12">
             <span className="text-xs font-black tracking-widest text-indigo-600 uppercase font-poppins">Our Foundations</span>
-            <h2 className="font-poppins text-3xl font-extrabold text-blue-950">
+            <h2 className="font-poppins text-2xl sm:text-3xl font-extrabold text-[#030213]">
               The Values That Drive Us
             </h2>
           </div>
@@ -136,13 +135,13 @@ export default function About() {
             {values.map((value, idx) => (
               <div 
                 key={idx} 
-                className={`p-8 border rounded-3xl text-left space-y-4 shadow-sm hover:shadow-md transition-shadow ${value.bg}`}
+                className={`p-8 border rounded-[2rem] text-left space-y-4 shadow-xl shadow-slate-900/5 bg-white hover:border-black/20 transition-all duration-300 ${value.bg}`}
               >
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                <div className="w-12 h-12 bg-[#F6F7FA] border border-black/5 rounded-[1.5rem] flex items-center justify-center shadow-md">
                   {value.icon}
                 </div>
-                <h3 className="font-poppins font-bold text-lg text-slate-900">{value.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                <h3 className="font-poppins font-bold text-base sm:text-lg text-[#030213]">{value.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-semibold">
                   {value.desc}
                 </p>
               </div>
@@ -152,32 +151,32 @@ export default function About() {
       </section>
 
       {/* 5. TEAM SECTION */}
-      <section className="py-20 bg-slate-50">
+      <section className="mb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
+          <div className="text-center max-w-2xl mx-auto space-y-4 mb-12">
             <span className="text-xs font-black tracking-widest text-indigo-600 uppercase font-poppins">Who We Are</span>
-            <h2 className="font-poppins text-3xl font-extrabold text-blue-950">
+            <h2 className="font-poppins text-2xl sm:text-3xl font-extrabold text-[#030213]">
               Meet Our Leadership Panel
             </h2>
-            <p className="text-slate-500 font-medium">
+            <p className="text-slate-600 text-xs sm:text-sm font-semibold">
               A curated panel of teachers, specialists, and academic judges committed to healthy cognitive development.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((t, idx) => (
               <div 
                 key={idx}
-                className="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all text-center space-y-4 flex flex-col justify-between"
+                className="bg-white border border-black/10 hover:border-black/20 p-6 rounded-[2rem] shadow-xl shadow-slate-900/5 transition-all duration-300 text-center space-y-4 flex flex-col justify-between hover:scale-[1.02] hover:shadow-2xl hover:shadow-slate-900/10"
               >
                 <div className="space-y-4">
-                  <div className={`w-20 h-20 rounded-full flex items-center justify-center font-poppins font-black text-2xl border-2 mx-auto mb-2 shadow-inner ${t.bg}`}>
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center font-poppins font-black text-2xl border mx-auto mb-2 shadow-md ${t.bg}`}>
                     {t.initials}
                   </div>
                   <div>
-                    <h3 className="font-poppins font-bold text-base text-blue-950">{t.name}</h3>
+                    <h3 className="font-poppins font-bold text-sm sm:text-base text-[#030213]">{t.name}</h3>
                     <span className="block text-xs font-bold text-indigo-600 mt-1">{t.role}</span>
-                    <span className="block text-[10px] text-slate-400 font-semibold mt-0.5">{t.spec}</span>
+                    <span className="block text-[10px] text-slate-500 font-semibold mt-1">{t.spec}</span>
                   </div>
                 </div>
               </div>
@@ -185,7 +184,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

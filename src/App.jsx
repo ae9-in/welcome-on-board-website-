@@ -15,14 +15,17 @@ import Blog from './pages/Blog';
 import Register from './pages/Register';
 import Quiz from './pages/Quiz';
 import HandwritingExam from './pages/HandwritingExam';
+import WelcomeOnBoard from './pages/WelcomeOnBoard';
+import SpellBee from './pages/SpellBee';
 
 const VALID_PAGES = [
   'home', 'competitions', 'about', 'results', 'gallery',
   'blog', 'faqs', 'contact', 'register', 'quiz', 'handwriting', 'art-craft',
+  'welcome', 'toonhub', 'spellbee'
 ];
 
 // Pages that hide the footer (fullscreen experiences)
-const FULLSCREEN_PAGES = ['quiz', 'handwriting', 'art-craft'];
+const FULLSCREEN_PAGES = ['quiz', 'handwriting', 'art-craft', 'welcome', 'toonhub', 'home', 'spellbee'];
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -33,12 +36,23 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '');
-      if (hash && VALID_PAGES.includes(hash)) {
+      const sections = ['competitions', 'about', 'results', 'gallery', 'blog', 'faqs', 'contact', 'register'];
+      
+      if (sections.includes(hash)) {
+        setCurrentPage('home');
+        setTimeout(() => {
+          const el = document.getElementById(hash);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 150);
+      } else if (hash && VALID_PAGES.includes(hash)) {
         setCurrentPage(hash);
+        window.scrollTo(0, 0);
       } else {
         setCurrentPage('home');
+        window.scrollTo(0, 0);
       }
-      window.scrollTo(0, 0);
     };
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
@@ -52,9 +66,25 @@ export default function App() {
       setStudentName(opts.name);
       localStorage.setItem('onboreding_student_name', opts.name);
     }
-    window.location.hash = `#/${pageId}`;
-    setCurrentPage(pageId);
-    window.scrollTo(0, 0);
+    
+    const sections = ['competitions', 'about', 'results', 'gallery', 'blog', 'faqs', 'contact', 'register'];
+    if (sections.includes(pageId) || pageId === 'home') {
+      window.location.hash = `#/${pageId}`;
+      setCurrentPage('home');
+      const targetId = pageId === 'home' ? 'hero' : pageId;
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollTo(0, 0);
+        }
+      }, 150);
+    } else {
+      window.location.hash = `#/${pageId}`;
+      setCurrentPage(pageId);
+      window.scrollTo(0, 0);
+    }
   };
 
   const renderPage = () => {
@@ -100,6 +130,16 @@ export default function App() {
             competition={selectedComp}
           />
         );
+      case 'spellbee':
+        return (
+          <SpellBee
+            navigateTo={navigateTo}
+            grade={quizGrade}
+          />
+        );
+      case 'welcome':
+      case 'toonhub':
+        return <WelcomeOnBoard navigateTo={navigateTo} />;
       default:
         return <Home navigateTo={navigateTo} setSelectedComp={setSelectedComp} />;
     }
@@ -107,13 +147,16 @@ export default function App() {
 
   const isFullscreen = FULLSCREEN_PAGES.includes(currentPage);
 
+  const showNavbar = !['welcome', 'toonhub'].includes(currentPage);
+  const showWidgets = !['welcome', 'toonhub', 'home'].includes(currentPage);
+
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar currentPage={currentPage} navigateTo={navigateTo} />
+      {showNavbar && <Navbar currentPage={currentPage} navigateTo={navigateTo} />}
       <main className="flex-grow">
         {renderPage()}
       </main>
-      <WhatsAppButton />
+      {showWidgets && <WhatsAppButton />}
       {!isFullscreen && <Footer navigateTo={navigateTo} />}
     </div>
   );
