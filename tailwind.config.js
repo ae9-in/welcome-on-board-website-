@@ -1,8 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/views/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -17,13 +19,13 @@ export default {
           600: '#4f46e5',
           700: '#4338ca',
           800: '#3730a3',
-          900: '#1e3a8a', // Deep Blue
+          900: '#1e3a8a',
           950: '#172554',
         },
         accent: {
-          orange: '#f97316', // Orange
-          yellow: '#f59e0b', // Yellow
-        }
+          orange: '#f97316',
+          yellow: '#f59e0b',
+        },
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
@@ -32,15 +34,15 @@ export default {
       animation: {
         'bounce-slow': 'bounce 3s infinite',
         'pulse-slow': 'pulse 3s infinite',
-        'float': 'float 4s ease-in-out infinite',
+        float: 'float 4s ease-in-out infinite',
       },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
-        }
-      }
+        },
+      },
     },
   },
   plugins: [],
-}
+};

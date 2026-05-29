@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Award, Flame } from 'lucide-react';
+import { Menu, X, Award, Flame, LogIn, LayoutDashboard } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Navbar({ currentPage, navigateTo }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -31,46 +32,72 @@ export default function Navbar({ currentPage, navigateTo }) {
 
   const isOverlay = currentPage === 'home' && !isScrolled;
 
+  // RBAC: determine dashboard destination from role
+  const getDashboardHref = () => {
+    const role = session?.user?.role;
+    if (role === 'admin') return '/admin/dashboard';
+    if (role === 'pronouncer' || role === 'judge') return '/pronouncer/dashboard';
+    return '/student/dashboard';
+  };
+
+  const isLoggedIn = status === 'authenticated';
+
   return (
-    <nav className={"fixed top-0 left-0 right-0 z-50 transition-all duration-300 " + (isOverlay ? "bg-transparent border-b border-transparent text-white" : "bg-[#F6F7FA]/90 backdrop-blur-lg border-b border-black/10 text-slate-900 shadow-sm")}>
+    <nav
+      className={
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ' +
+        (isOverlay
+          ? 'bg-transparent border-b border-transparent text-white'
+          : 'bg-[#F6F7FA]/90 backdrop-blur-lg border-b border-black/10 text-slate-900 shadow-sm')
+      }
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo Section */}
-          <div 
+
+          {/* Logo */}
+          <div
             onClick={() => handleNavClick('home')}
-            className="flex items-center space-x-2 cursor-pointer group"
+            className="flex items-center space-x-2 cursor-pointer group shrink-0"
           >
             <div className="bg-gradient-to-tr from-blue-600 via-indigo-600 to-amber-400 p-2.5 rounded-2xl shadow-md transform group-hover:rotate-12 transition-transform duration-300">
               <Award className="h-7 w-7 text-white" />
             </div>
             <div>
-              <span 
-                className={"text-2xl tracking-wider uppercase transition-colors block " + (isOverlay ? "text-white" : "text-[#030213]")}
+              <span
+                className={
+                  'text-2xl tracking-wider uppercase transition-colors block ' +
+                  (isOverlay ? 'text-white' : 'text-[#030213]')
+                }
                 style={{ fontFamily: "'Anton', sans-serif", lineHeight: 1 }}
               >
-                On<span className={isOverlay ? "text-white" : "text-black"}>Boarding</span>
+                On<span className={isOverlay ? 'text-white' : 'text-black'}>Boarding</span>
               </span>
-              <div className={"text-[10px] font-bold tracking-widest uppercase mt-0.5 block transition-colors " + (isOverlay ? "text-white/70" : "text-slate-500")}>
+              <div
+                className={
+                  'text-[10px] font-bold tracking-widest uppercase mt-0.5 block transition-colors ' +
+                  (isOverlay ? 'text-white/70' : 'text-slate-500')
+                }
+              >
                 KG to 10th Grade
               </div>
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden xl:flex items-center space-x-1">
+          <div className="hidden xl:flex items-center space-x-0.5">
             {navItems.map((item) => {
               const isActive = currentPage === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold tracking-wide transition-all duration-300 focus:outline-none ${
-                    isActive 
+                  className={`px-3.5 py-2 rounded-xl text-sm font-semibold tracking-wide transition-all duration-200 focus:outline-none ${
+                    isActive
                       ? isOverlay
                         ? 'bg-white/15 text-white border border-white/20 shadow-sm'
                         : 'bg-[#030213] text-white shadow-sm'
                       : isOverlay
-                        ? 'text-white/75 hover:text-white hover:bg-white/5'
+                        ? 'text-white/75 hover:text-white hover:bg-white/10'
                         : 'text-slate-700 hover:text-[#030213] hover:bg-black/5'
                   }`}
                 >
@@ -80,24 +107,61 @@ export default function Navbar({ currentPage, navigateTo }) {
             })}
           </div>
 
-          {/* Register CTA */}
-          <div className="hidden xl:flex items-center">
+          {/* Desktop CTA Buttons */}
+          <div className="hidden xl:flex items-center gap-2 shrink-0">
+            {/* RBAC: show Dashboard or Login */}
+            {isLoggedIn ? (
+              <Link
+                href={getDashboardHref()}
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold tracking-wide border transition-all duration-200 active:scale-95 ${
+                  isOverlay
+                    ? 'border-white/30 text-white hover:bg-white/10 hover:border-white/50'
+                    : 'border-slate-300 text-slate-700 hover:bg-black/5 hover:border-slate-400 hover:text-[#030213]'
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Dashboard</span>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold tracking-wide border transition-all duration-200 active:scale-95 ${
+                  isOverlay
+                    ? 'border-white/30 text-white hover:bg-white/10 hover:border-white/50'
+                    : 'border-slate-300 text-slate-700 hover:bg-black/5 hover:border-slate-400 hover:text-[#030213]'
+                }`}
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Login</span>
+              </Link>
+            )}
+
+            {/* Register Now */}
             <button
               onClick={() => handleNavClick('register')}
-              className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-bold text-white rounded-2xl group bg-gradient-to-br from-orange-500 to-yellow-400 group-hover:from-orange-500 group-hover:to-yellow-400 hover:text-white focus:ring-4 focus:outline-none focus:ring-orange-200 mt-2 shadow-lg shadow-orange-500/20 active:scale-95 transition-transform duration-150"
+              className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-bold text-white rounded-2xl group bg-gradient-to-br from-orange-500 to-yellow-400 hover:from-orange-400 hover:to-yellow-300 focus:ring-4 focus:outline-none focus:ring-orange-200 shadow-lg shadow-orange-500/20 active:scale-95 transition-transform duration-150"
             >
-              <span className={`relative px-6 py-2.5 transition-all ease-in duration-75 rounded-[14px] group-hover:bg-opacity-0 flex items-center space-x-2 ${isOverlay ? 'bg-indigo-900' : 'bg-[#030213]'}`}>
-                <Flame className="w-4 h-4 text-orange-400 group-hover:text-white animate-pulse" />
+              <span
+                className={`relative px-6 py-2.5 transition-all ease-in duration-75 rounded-[14px] group-hover:bg-opacity-0 flex items-center space-x-2 ${
+                  isOverlay ? 'bg-indigo-900' : 'bg-[#030213]'
+                }`}
+              >
+                <Flame className="w-4 h-4 text-orange-400 group-hover:text-white transition-colors" />
                 <span>Register Now</span>
               </span>
             </button>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu toggle */}
           <div className="flex xl:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`inline-flex items-center justify-center p-2 rounded-xl focus:outline-none transition-colors ${isOverlay ? 'text-white/80 hover:text-white hover:bg-white/10' : 'text-slate-700 hover:text-[#030213] hover:bg-black/5'}`}
+              className={`inline-flex items-center justify-center p-2 rounded-xl focus:outline-none transition-colors ${
+                isOverlay
+                  ? 'text-white/80 hover:text-white hover:bg-white/10'
+                  : 'text-slate-700 hover:text-[#030213] hover:bg-black/5'
+              }`}
+              aria-label="Toggle menu"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -106,12 +170,16 @@ export default function Navbar({ currentPage, navigateTo }) {
       </div>
 
       {/* Mobile Navigation Drawer */}
-      <div 
+      <div
         className={`xl:hidden fixed inset-x-0 top-20 shadow-xl transition-all duration-300 ease-in-out origin-top ${
           isOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'
-        } ${isOverlay ? 'bg-[#070A13]/95 border-white/10 text-white' : 'bg-[#F6F7FA]/95 border-black/10 text-slate-900'} backdrop-blur-xl border-b`}
+        } ${
+          isOverlay
+            ? 'bg-[#070A13]/95 border-white/10 text-white'
+            : 'bg-[#F6F7FA]/95 border-black/10 text-slate-900'
+        } backdrop-blur-xl border-b`}
       >
-        <div className="px-4 pt-2 pb-6 space-y-1.5 bg-transparent">
+        <div className="px-4 pt-2 pb-6 space-y-1.5">
           {navItems.map((item) => {
             const isActive = currentPage === item.id;
             return (
@@ -119,7 +187,7 @@ export default function Navbar({ currentPage, navigateTo }) {
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl text-base font-bold tracking-wide transition-all ${
-                  isActive 
+                  isActive
                     ? isOverlay
                       ? 'bg-white/15 text-white shadow-md'
                       : 'bg-[#030213] text-white shadow-md'
@@ -132,14 +200,43 @@ export default function Navbar({ currentPage, navigateTo }) {
               </button>
             );
           })}
-          <div className={`pt-4 border-t mt-4 px-2 ${isOverlay ? 'border-white/10' : 'border-black/10'}`}>
+
+          <div className={`pt-4 border-t mt-4 px-2 space-y-2 ${isOverlay ? 'border-white/10' : 'border-black/10'}`}>
+            {/* Register */}
             <button
               onClick={() => handleNavClick('register')}
               className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-orange-500/25 active:scale-95 transition-transform"
             >
-              <Flame className="w-5 h-5 text-white animate-bounce" />
+              <Flame className="w-5 h-5 text-white" />
               <span>Register Now</span>
             </button>
+
+            {/* RBAC: Dashboard or Login */}
+            {isLoggedIn ? (
+              <Link
+                href={getDashboardHref()}
+                className={`w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold border transition-all active:scale-95 ${
+                  isOverlay
+                    ? 'border-white/20 text-white hover:bg-white/10'
+                    : 'border-slate-300 text-slate-700 hover:bg-black/5'
+                }`}
+              >
+                <LayoutDashboard className="w-5 h-5" />
+                <span>Dashboard</span>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className={`w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold border transition-all active:scale-95 ${
+                  isOverlay
+                    ? 'border-white/20 text-white hover:bg-white/10'
+                    : 'border-slate-300 text-slate-700 hover:bg-black/5'
+                }`}
+              >
+                <LogIn className="w-5 h-5" />
+                <span>Login</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>

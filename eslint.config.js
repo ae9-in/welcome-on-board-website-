@@ -1,21 +1,11 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+const { FlatCompat } = require('@eslint/eslintrc');
 
-export default defineConfig([
-  globalIgnores(['dist']),
+module.exports = [
+  { ignores: ['dist', '.next', 'node_modules'] },
   {
-    files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
-      globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
-])
+];
