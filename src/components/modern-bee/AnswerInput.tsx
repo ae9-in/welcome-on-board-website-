@@ -56,7 +56,7 @@ export function AnswerInput({ onSubmit, disabled, startTimeMs, onCorrect, onFail
         onCorrect?.();
       } else if (result.livesRemaining <= 0) {
         setFeedback('noLives');
-        setFeedbackMsg('No lives remaining.');
+        setFeedbackMsg('Incorrect.');
         setRevealedWord(result.correctAnswer ?? '');
         setValue('');
         onFail?.();

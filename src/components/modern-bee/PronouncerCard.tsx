@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { WordHero } from './WordHero';
 import { HearWordButton } from './HearWordButton';
 import { ContextPanel } from './ContextPanel';
-import { LivesDisplay } from './LivesDisplay';
 import { AnswerInput } from './AnswerInput';
 import { useTTS } from '@/hooks/useTTS';
 import type { WordDisplayData } from '@/types/modern-bee';
@@ -99,12 +98,6 @@ export function PronouncerCard({
           category={word.category}
           wordIndex={word.index}
           totalWords={word.total}
-        />
-
-        {/* LivesDisplay */}
-        <LivesDisplay
-          livesRemaining={lives}
-          maxLives={2}
         />
 
         {/* HearWordButton */}

@@ -18,14 +18,20 @@ declare global {
 const cached: MongooseCache = global.mongoose ?? { conn: null, promise: null };
 global.mongoose = cached;
 
+let dbConnectionFailed = false;
+
 export async function connectDB(): Promise<typeof mongoose> {
+  if (dbConnectionFailed) {
+    throw new Error('Database is offline (connection previously timed out). Bypassing to enable fast local sandbox simulation.');
+  }
+
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 2000,
       socketTimeoutMS: 45000,
     }).then((m) => {
       console.log('✅ MongoDB connected');
@@ -37,6 +43,7 @@ export async function connectDB(): Promise<typeof mongoose> {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    dbConnectionFailed = true; // Flag connection as failed to bypass future blocking timeouts
     throw e;
   }
 

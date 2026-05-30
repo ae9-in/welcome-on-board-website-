@@ -107,7 +107,12 @@ export async function ensureWordHasRealDetails(word: any): Promise<void> {
 
   if (isPlaceholderDef || isPlaceholderSent) {
     try {
-      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetLower}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetLower}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
       if (res.ok) {
         const data = await res.json();
         const firstEntry = data[0];

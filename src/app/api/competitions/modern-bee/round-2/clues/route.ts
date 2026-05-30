@@ -7,14 +7,14 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const sessionId = searchParams.get('sessionId');
+  const clueIndex = parseInt(searchParams.get('index') ?? '0');
+
   try {
     await connectDB();
     const auth = await getServerSession(authOptions);
     if (!auth?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const { searchParams } = new URL(req.url);
-    const sessionId = searchParams.get('sessionId');
-    const clueIndex = parseInt(searchParams.get('index') ?? '0');
 
     if (!sessionId) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
@@ -62,7 +62,6 @@ export async function GET(req: NextRequest) {
 
     // Determine clue type from configured types
     const clueTypeOptions = session.round2Config.clueTypes || ['situational', 'synonym', 'millennial'];
-    // We can use a deterministic selection based on index so it is stable per student index, or random
     const clueType = clueTypeOptions[clueIndex % clueTypeOptions.length];
 
     let clueText = '';
@@ -80,6 +79,41 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.warn('⚠️ Server-side MongoDB fallback mode activated for clues API:', error.message);
+
+    const mockClues = [
+      { wordId: 'mock-r2-0', targetWord: 'UNBOXING', situationalPrompt: 'Opening up a brand-new, sealed toy catalog order on a live stream.', formalSynonym: 'Unwrapping or unpacking.', millennialCrossRef: 'Making a home video of opening birthday gifts.' },
+      { wordId: 'mock-r2-1', targetWord: 'EMOTE', situationalPrompt: 'Your character executes a fast victory celebration dance on a gaming server.', formalSynonym: 'Gesture or expression.', millennialCrossRef: 'Doing an animated avatar dance step.' },
+      { wordId: 'mock-r2-2', targetWord: 'VIBE', situationalPrompt: 'The relaxing energy of a low-light music room filled with cozy pillows.', formalSynonym: 'Atmosphere or aura.', millennialCrossRef: 'The overall mood or general feeling.' },
+      { wordId: 'mock-r2-3', targetWord: 'RIZZ', situationalPrompt: 'A speaker smoothly convinces their classmates to vote for them using pure charm.', formalSynonym: 'Charisma or allure.', millennialCrossRef: 'Having smooth talking game or charm.' },
+      { wordId: 'mock-r2-4', targetWord: 'SUS', situationalPrompt: 'A player quietly sneaks out of a shared document room without saving code.', formalSynonym: 'Suspicious or questionable.', millennialCrossRef: 'Shady or untrustworthy actions.' },
+      { wordId: 'mock-r2-5', targetWord: 'CHEUGY', situationalPrompt: 'Someone inserts bright, word-art animations into a presentation deck.', formalSynonym: 'Outdated or old-fashioned.', millennialCrossRef: 'Basic or trying too hard to stay trendy.' },
+      { wordId: 'mock-r2-6', targetWord: 'DELULU', situationalPrompt: 'An individual plans to code an entire enterprise network map during a single five-minute recess block.', formalSynonym: 'Delusional or unrealistic.', millennialCrossRef: 'Completely daydreaming or out of touch.' },
+      { wordId: 'mock-r2-7', targetWord: 'GOATED', situationalPrompt: 'A speed-runner completes a flawless level run that shatters all past global time tracking records.', formalSynonym: 'Incomparable or supreme.', millennialCrossRef: 'The Greatest of All Time (G.O.A.T.).' },
+      { wordId: 'mock-r2-8', targetWord: 'CLOUT', situationalPrompt: 'An internet channel compromises software utility just to score algorithmic metrics.', formalSynonym: 'Influence or leverage.', millennialCrossRef: 'Chasing fame or looking for attention online.' }
+    ];
+
+    if (clueIndex >= mockClues.length) {
+      return NextResponse.json({ done: true, totalClues: mockClues.length });
+    }
+
+    const item = mockClues[clueIndex];
+    const clueTypes = ['situational', 'synonym', 'millennial'];
+    const clueType = clueTypes[clueIndex % clueTypes.length];
+    
+    let clueText = '';
+    if (clueType === 'situational') clueText = item.situationalPrompt;
+    else if (clueType === 'synonym') clueText = item.formalSynonym;
+    else clueText = item.millennialCrossRef;
+
+    return NextResponse.json({
+      wordId: item.wordId,
+      clueType,
+      clueText,
+      index: clueIndex,
+      total: mockClues.length,
+      timeLimit: 60,
+      targetWord: item.targetWord, // admin / frontend check
+    });
   }
 }

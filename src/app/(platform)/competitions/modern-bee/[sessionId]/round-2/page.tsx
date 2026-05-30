@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -47,15 +47,44 @@ export default function Round2Page({ params }: { params: { sessionId: string } }
   const [pointsEarned, setPointsEarned] = useState(0);
   const [startTime, setStartTime] = useState<number>(0);
   const [group, setGroup] = useState<'group1' | 'group2' | 'group3'>('group2');
+  const [clueCache, setClueCache] = useState<Record<number, any>>({});
+  const isOfflineRef = useRef(false);
 
   useEffect(() => {
     setStartTime(Date.now());
   }, []);
 
+  // Prefetch next clue in background
+  const prefetchNextClue = useCallback(async (nextIndex: number) => {
+    if (isOfflineRef.current) return;
+    try {
+      const res = await fetch(`/api/competitions/modern-bee/round-2/clues?sessionId=${params.sessionId}&index=${nextIndex}`);
+      const data = await res.ok ? await res.json() : null;
+      if (data && !data.error && !data.done) {
+        setClueCache(prev => ({ ...prev, [nextIndex]: data }));
+      }
+    } catch (e) {
+      // Ignore prefetch errors
+    }
+  }, [params.sessionId]);
+
   // Fetch next clue
   const fetchClue = useCallback(async () => {
+    if (clueCache[currentWordIndex]) {
+      setCurrentClue(clueCache[currentWordIndex]);
+      setIsLoading(false);
+      setStartTime(Date.now());
+      if (!isOfflineRef.current) {
+        prefetchNextClue(currentWordIndex + 1);
+      }
+      return;
+    }
+
     setIsLoading(true);
     try {
+      if (isOfflineRef.current) {
+        throw new Error('Offline mode');
+      }
       const res = await fetch(`/api/competitions/modern-bee/round-2/clues?sessionId=${params.sessionId}&index=${currentWordIndex}`);
       const data = await res.ok ? await res.json() : null;
 
@@ -66,12 +95,16 @@ export default function Round2Page({ params }: { params: { sessionId: string } }
           return;
         }
         setCurrentClue(data);
+        setClueCache(prev => ({ ...prev, [currentWordIndex]: data }));
         setIsLoading(false);
         setStartTime(Date.now());
+        prefetchNextClue(currentWordIndex + 1);
       } else {
+        isOfflineRef.current = true;
         throw new Error('Fallback to local simulation');
       }
     } catch (err) {
+      isOfflineRef.current = true;
       // Local Sandbox Simulation
       const localWordsStr = typeof window !== 'undefined' ? localStorage.getItem('onboreding_r2_words') : null;
       let localWords: string[] = [];
@@ -108,7 +141,7 @@ export default function Round2Page({ params }: { params: { sessionId: string } }
       else if (clueType === 'synonym') clueText = item.formalSynonym;
       else clueText = item.millennialCrossRef;
 
-      setCurrentClue({
+      const simulatedClueData = {
         wordId: item.wordId,
         clueType,
         clueText,
@@ -116,11 +149,14 @@ export default function Round2Page({ params }: { params: { sessionId: string } }
         total: list.length,
         timeLimit: 60,
         targetWord: item.targetWord
-      });
+      };
+
+      setCurrentClue(simulatedClueData);
+      setClueCache(prev => ({ ...prev, [currentWordIndex]: simulatedClueData }));
       setIsLoading(false);
       setStartTime(Date.now());
     }
-  }, [currentWordIndex, params.sessionId, group, router]);
+  }, [currentWordIndex, params.sessionId, group, router, clueCache, prefetchNextClue]);
 
   useEffect(() => {
     fetchClue();
@@ -132,6 +168,9 @@ export default function Round2Page({ params }: { params: { sessionId: string } }
     setIsLoading(true);
 
     try {
+      if (isOfflineRef.current) {
+        throw new Error('Offline mode');
+      }
       const res = await fetch('/api/competitions/modern-bee/round-2/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -143,16 +182,18 @@ export default function Round2Page({ params }: { params: { sessionId: string } }
           timeTakenMs: timeTaken,
         }),
       });
-      const data = await res.json();
+      const data = await res.ok ? await res.json() : null;
 
-      if (res.ok && !data.error) {
+      if (res.ok && data && !data.error) {
         setFeedback(data.isCorrect ? 'correct' : 'wrong');
         setPointsEarned(data.pointsEarned);
         recordAnswer(data);
       } else {
+        isOfflineRef.current = true;
         throw new Error('Local simulation fallback');
       }
     } catch (err) {
+      isOfflineRef.current = true;
       // Sandbox validation
       const correctWord = currentClue.targetWord;
       const isCorrect = finalAnswer.toLowerCase().trim() === correctWord.toLowerCase().trim();

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { PronouncerCard } from '@/components/modern-bee/PronouncerCard';
 import type { WordDisplayData } from '@/types/modern-bee';
+import { generateFallbackDetails } from '@/lib/dictionary-client';
 
 // Local fallbacks in case DB connections are unseeded/offline
 const FALLBACK_WORDS = {
@@ -44,6 +45,8 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
   const [currentWord, setCurrentWord] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<'group1' | 'group2' | 'group3'>('group2');
+  const [wordCache, setWordCache] = useState<Record<number, any>>({});
+  const isOfflineRef = useRef(false);
 
   // Identify student division group based on grade
   useEffect(() => {
@@ -58,10 +61,36 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
     }
   }, []);
 
+  // Prefetch the next word in background
+  const prefetchNextWord = useCallback(async (nextIndex: number) => {
+    if (isOfflineRef.current) return;
+    try {
+      const res = await fetch(`/api/competitions/modern-bee/round-1/words?sessionId=${params.sessionId}&index=${nextIndex}`);
+      const data = await res.ok ? await res.json() : null;
+      if (data && !data.error && !data.done) {
+        setWordCache(prev => ({ ...prev, [nextIndex]: data }));
+      }
+    } catch (e) {
+      // Ignore prefetch errors
+    }
+  }, [params.sessionId]);
+
   // Fetch next word
   const fetchWord = useCallback(async () => {
+    if (wordCache[currentWordIndex]) {
+      setCurrentWord(wordCache[currentWordIndex]);
+      setIsLoading(false);
+      if (!isOfflineRef.current) {
+        prefetchNextWord(currentWordIndex + 1);
+      }
+      return;
+    }
+
     setIsLoading(true);
     try {
+      if (isOfflineRef.current) {
+        throw new Error('Offline mode');
+      }
       const res = await fetch(`/api/competitions/modern-bee/round-1/words?sessionId=${params.sessionId}&index=${currentWordIndex}`);
       const data = await res.ok ? await res.json() : null;
       
@@ -73,11 +102,15 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
           return;
         }
         setCurrentWord(data);
+        setWordCache(prev => ({ ...prev, [currentWordIndex]: data }));
         setIsLoading(false);
+        prefetchNextWord(currentWordIndex + 1);
       } else {
+        isOfflineRef.current = true;
         throw new Error('Fallback to local simulation');
       }
     } catch (err) {
+      isOfflineRef.current = true;
       // Local Sandbox Simulation
       const localWordsStr = typeof window !== 'undefined' ? localStorage.getItem('onboreding_r1_words') : null;
       let localWords: string[] = [];
@@ -116,10 +149,7 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
         let formalSynonym = "";
         let millennialCrossRef = "";
 
-        const targetUpper = item.targetWord.toUpperCase();
-
         try {
-          const { generateFallbackDetails, SLANG_DICT, LOCAL_DICTIONARY } = await import('@/lib/dictionary-client');
           const details = generateFallbackDetails(item.targetWord);
           
           definition = details.definition;
@@ -130,42 +160,13 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
           formalSynonym = details.formalSynonym;
           millennialCrossRef = details.millennialCrossRef;
 
-          // If not slang or a local word, try fetching from Dictionary API
-          if (!SLANG_DICT[targetUpper] && !LOCAL_DICTIONARY[targetUpper]) {
-            const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${item.targetWord.toLowerCase()}`);
-            if (dictRes.ok) {
-              const data = await dictRes.json();
-              const firstEntry = data[0];
-              const firstMeaning = firstEntry?.meanings?.[0];
-              partOfSpeech = firstMeaning?.partOfSpeech || partOfSpeech;
-              definition = firstMeaning?.definitions?.[0]?.definition || definition;
-
-              const examples: string[] = [];
-              firstMeaning?.definitions?.forEach((d: any) => {
-                if (d.example) examples.push(d.example);
-              });
-              if (examples.length < 2) {
-                firstEntry?.meanings?.forEach((m: any) => {
-                  m.definitions?.forEach((d: any) => {
-                    if (d.example && !examples.includes(d.example)) {
-                      examples.push(d.example);
-                    }
-                  });
-                });
-              }
-              if (examples[0]) exampleSentence1 = examples[0];
-              if (examples[1]) exampleSentence2 = examples[1];
-
-              situationalPrompt = `Imagine a scenario where one refers to the concept of "${item.targetWord.toLowerCase()}". ${exampleSentence1}`;
-              formalSynonym = `A term meaning: ${definition}`;
-              millennialCrossRef = `Using "${item.targetWord.toLowerCase()}" in context: "${exampleSentence2}"`;
-            }
-          }
+          // Using robust offline fallback details instantly for fast loading
+          // without blocking on external rate-limited dictionary APIs.
         } catch (e) {
           console.warn('Client dictionary load failed:', e);
         }
 
-        setCurrentWord({
+        const simulatedWordData = {
           wordId: item.wordId,
           index: currentWordIndex,
           total: list.length,
@@ -183,13 +184,16 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
           situationalPrompt,
           formalSynonym,
           millennialCrossRef
-        });
+        };
+
+        setCurrentWord(simulatedWordData);
+        setWordCache(prev => ({ ...prev, [currentWordIndex]: simulatedWordData }));
         setIsLoading(false);
       };
 
       loadSimulationDetails();
     }
-  }, [currentWordIndex, params.sessionId, group, livesRemaining, advanceRound, router]);
+  }, [currentWordIndex, params.sessionId, group, livesRemaining, advanceRound, router, wordCache, prefetchNextWord]);
 
   useEffect(() => {
     fetchWord();
@@ -197,6 +201,9 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
 
   const handleAnswerSubmit = async (trimmedAnswer: string, timeTakenMs: number) => {
     try {
+      if (isOfflineRef.current) {
+        throw new Error('Offline mode');
+      }
       const res = await fetch('/api/competitions/modern-bee/round-1/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -207,9 +214,9 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
           timeTakenMs,
         }),
       });
-      const data = await res.json();
+      const data = await res.ok ? await res.json() : null;
       
-      if (res.ok && !data.error) {
+      if (res.ok && data && !data.error) {
         recordAnswer(data);
         return {
           isCorrect: data.isCorrect,
@@ -217,17 +224,15 @@ export default function Round1Page({ params }: { params: { sessionId: string } }
           livesRemaining: data.livesRemaining,
         };
       } else {
+        isOfflineRef.current = true;
         throw new Error('Local check fallback');
       }
     } catch (err) {
+      isOfflineRef.current = true;
       // Local simulation check
       const correctWord = currentWord.targetWord || 'RIZZ';
       const isCorrect = trimmedAnswer.toLowerCase().trim() === correctWord.toLowerCase().trim();
-      let simulatedLives = livesRemaining;
-      
-      if (!isCorrect && livesRemaining > 0) {
-        simulatedLives -= 1;
-      }
+      let simulatedLives = isCorrect ? livesRemaining : 0;
       
       const timeBonus = isCorrect ? (timeTakenMs < 15000 ? 3 : timeTakenMs < 30000 ? 1 : 0) : 0;
       const pts = isCorrect ? (10 + timeBonus) : 0;
