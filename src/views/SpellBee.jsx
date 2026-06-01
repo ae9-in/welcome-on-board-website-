@@ -85,8 +85,6 @@ export default function SpellBee({ navigateTo, grade: propGrade }) {
 
   // Game Workspace state
   const [storyText, setStoryText] = useState('');
-  const [timeLeft, setTimeLeft] = useState(settings.timeLimit);
-  const [timerActive, setTimerActive] = useState(false);
   const [usedWords, setUsedWords] = useState([]);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [activeHint, setActiveHint] = useState('');
@@ -113,21 +111,7 @@ export default function SpellBee({ navigateTo, grade: propGrade }) {
     setActiveHint('');
     setSpellingErrors([]);
     setActiveErrorDetail(null);
-    setTimeLeft(settings.timeLimit);
-  }, [grade, settings.timeLimit]);
-
-  // Timer loop
-  useEffect(() => {
-    if (timerActive && timeLeft > 0) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      clearInterval(timerRef.current);
-      handleSubmitStory();
-    }
-    return () => clearInterval(timerRef.current);
-  }, [timerActive, timeLeft]);
+  }, [grade]);
 
   // Detect words used in story
   useEffect(() => {
@@ -141,8 +125,6 @@ export default function SpellBee({ navigateTo, grade: propGrade }) {
   // Start Competition Exam
   const startExam = () => {
     setPhase('workspace');
-    setTimerActive(true);
-    setTimeLeft(settings.timeLimit);
   };
 
   // Give child-friendly hints (Plot, Starter, Synonym)
@@ -193,9 +175,6 @@ export default function SpellBee({ navigateTo, grade: propGrade }) {
 
   // Submit and evaluate
   const handleSubmitStory = () => {
-    setTimerActive(false);
-    clearInterval(timerRef.current);
-
     // Calculate score parameters
     const wordCount = storyText.trim().split(/\s+/).filter(Boolean).length;
     const wordCoverage = Math.round((usedWords.length / settings.words.length) * 100);
@@ -315,7 +294,7 @@ export default function SpellBee({ navigateTo, grade: propGrade }) {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div>
                       <span className="block text-[9px] uppercase font-bold text-slate-400">Time Limit</span>
-                      <span className="text-slate-800 font-bold">{formatTime(settings.timeLimit)} Minutes</span>
+                      <span className="text-slate-800 font-bold">No Limit</span>
                     </div>
                     <div>
                       <span className="block text-[9px] uppercase font-bold text-slate-400">Target Length</span>
@@ -405,10 +384,6 @@ export default function SpellBee({ navigateTo, grade: propGrade }) {
                   <div>
                     <h2 className="font-poppins text-lg font-black text-[#030213]">{settings.title}</h2>
                     <p className="text-xs text-slate-500 font-semibold">{settings.instructions}</p>
-                  </div>
-                  <div className="flex items-center space-x-2 bg-rose-50 border border-rose-250 border-rose-200 text-rose-700 px-3.5 py-1.5 rounded-full text-xs font-black">
-                    <Clock className="w-4 h-4 animate-pulse" />
-                    <span>{formatTime(timeLeft)} Left</span>
                   </div>
                 </div>
 
@@ -685,7 +660,7 @@ export default function SpellBee({ navigateTo, grade: propGrade }) {
                 {[
                   { name: 'Word Wizard', desc: 'Used all keywords', unlocked: true, icon: Brain },
                   { name: 'Story Master', desc: 'Scored 90+ in Story', unlocked: results.aiAverage >= 90, icon: BookOpen },
-                  { name: 'Time Challenger', desc: 'Finished with time left', unlocked: true, icon: Clock },
+                  { name: 'Challenger', desc: 'Completed the challenge', unlocked: true, icon: Clock },
                   { name: 'Space Explorer', desc: 'Unlocked Space Pack', unlocked: results.unlockedSpace, icon: Sparkles }
                 ].map((badge, idx) => (
                   <div 

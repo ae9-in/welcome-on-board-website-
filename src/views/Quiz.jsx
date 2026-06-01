@@ -309,9 +309,7 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [round1Score, setRound1Score] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
   const [answers, setAnswers] = useState([]);
-  const [timerActive, setTimerActive] = useState(false);
 
   const grades = [
     'LKG', 'UKG', 'Class 1', 'Class 2', 'Class 3', 'Class 4',
@@ -365,31 +363,13 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
     setAnswers([]);
     setSelectedOption(null);
     setIsAnswered(isAdmin);
-    setTimeLeft(limit);
-    setTimerActive(!isAdmin);
     setPhase('quiz');
   };
-
-  const handleTimeUp = useCallback(() => {
-    if (!isAnswered) {
-      setIsAnswered(true);
-      setTimerActive(false);
-      setAnswers(prev => [...prev, { selected: null, correct: questions[currentIndex]?.answer }]);
-    }
-  }, [isAnswered, questions, currentIndex]);
-
-  useEffect(() => {
-    if (!timerActive || isAnswered) return;
-    if (timeLeft <= 0) { handleTimeUp(); return; }
-    const t = setTimeout(() => setTimeLeft(t => t - 1), 1000);
-    return () => clearTimeout(t);
-  }, [timeLeft, timerActive, isAnswered, handleTimeUp]);
 
   const handleSelect = (idx) => {
     if (isAnswered) return;
     setSelectedOption(idx);
     setIsAnswered(true);
-    setTimerActive(false);
     const correct = idx === questions[currentIndex].answer;
     if (correct) setScore(s => s + 1);
     setAnswers(prev => [...prev, { selected: idx, correct: questions[currentIndex].answer }]);
@@ -429,9 +409,6 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
     setCurrentIndex(i => i + 1);
     setSelectedOption(null);
     setIsAnswered(isAdmin);
-    const limit = grade === 'Advanced' ? 120 : TIMER_SECONDS;
-    setTimeLeft(limit);
-    setTimerActive(!isAdmin);
   };
 
   const startRound2 = () => {
@@ -440,9 +417,6 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
     setCurrentIndex(0);
     setSelectedOption(null);
     setIsAnswered(isAdmin);
-    const limit = grade === 'Advanced' ? 120 : TIMER_SECONDS;
-    setTimeLeft(limit);
-    setTimerActive(!isAdmin);
     setPhase('quiz');
   };
 
@@ -502,7 +476,7 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
               <h3 className="font-poppins font-bold text-sm text-[#030213]">Quiz Rules</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { icon: <Clock className="w-5 h-5 text-indigo-600" />, title: subject === 'math' && grade === 'Advanced' ? '2 min / question' : '30 sec / question', desc: 'Timer resets each round' },
+                  { icon: <Clock className="w-5 h-5 text-indigo-600" />, title: 'No Time Limit', desc: 'Take your time to answer' },
                   { icon: <Target className="w-5 h-5 text-indigo-600" />, title: '200 Questions', desc: subject === 'math' ? 'Class-specific topics' : 'GK, General Affairs, Puzzles & Science' },
                   { icon: <Trophy className="w-5 h-5 text-emerald-600" />, title: 'Earn Certificate', desc: 'Score 75%+ to win' },
                 ].map((r, i) => (
@@ -566,10 +540,6 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
 
   if (phase === 'quiz' && questions.length > 0) {
     const q = questions[currentIndex];
-    const progress = ((currentIndex) / questions.length) * 100;
-    const limit = grade === 'Advanced' ? 120 : TIMER_SECONDS;
-    const timerPercent = (timeLeft / limit) * 100;
-    const timerColor = timeLeft > (limit / 2) ? 'bg-emerald-500' : timeLeft > (limit / 4) ? 'bg-amber-500' : 'bg-red-500';
 
     return (
       <div className="min-h-screen bg-[#F6F7FA] py-8 px-4">
@@ -610,27 +580,6 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
               />
             </div>
           </div>
-
-          {/* Timer — hidden for admin */}
-          {!isAdmin && (
-            <div className="space-y-1">
-              <div className="flex justify-between items-center text-xs text-slate-600 font-semibold">
-                <span className="flex items-center space-x-1">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>Time Remaining</span>
-                </span>
-                <span className={`font-black text-sm ${timeLeft <= 7 ? 'text-red-600 animate-pulse' : 'text-slate-800'}`}>
-                  {timeLeft}s
-                </span>
-              </div>
-              <div className="h-2 bg-black/5 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-1000 ${timerColor}`}
-                  style={{ width: `${timerPercent}%` }}
-                />
-              </div>
-            </div>
-          )}
 
           {/* Question Card */}
           <div className="bg-white border border-black/10 rounded-[2rem] p-8 shadow-xl shadow-slate-900/5">
@@ -712,14 +661,12 @@ export default function Quiz({ navigateTo, grade: propGrade, competition: propCo
               </div>
             ) : isAnswered && (
               <div className={`mt-6 p-4 rounded-xl border flex items-center justify-between ${
-                selectedOption === q.answer ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'
+                selectedOption === q.answer ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'
               }`}>
                 <div className="flex items-center space-x-2 text-sm font-semibold">
                   {selectedOption === q.answer
                     ? <><CheckCircle className="w-5 h-5 text-emerald-600" /><span className="text-emerald-700">Correct! +1 point</span></>
-                    : selectedOption === null
-                      ? <><AlertCircle className="w-5 h-5 text-amber-600" /><span className="text-amber-700">Time's up! Correct: {q.options[q.answer]}</span></>
-                      : <><XCircle className="w-5 h-5 text-red-600" /><span className="text-red-700">Correct: {q.options[q.answer]}</span></>
+                    : <><XCircle className="w-5 h-5 text-red-600" /><span className="text-red-700">Correct: {q.options[q.answer]}</span></>
                   }
                 </div>
                 <button

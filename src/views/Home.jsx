@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import Competitions from './Competitions';
-import About from './About';
-import Results from './Results';
-import Gallery from './Gallery';
-import Blog from './Blog';
-import FAQs from './FAQs';
-import Contact from './Contact';
-import Register from './Register';
+import dynamic from 'next/dynamic';
+
+const Competitions = dynamic(() => import('./Competitions'), { ssr: false });
+const About        = dynamic(() => import('./About'), { ssr: false });
+const Results      = dynamic(() => import('./Results'), { ssr: false });
+const Gallery      = dynamic(() => import('./Gallery'), { ssr: false });
+const Blog         = dynamic(() => import('./Blog'), { ssr: false });
+const FAQs         = dynamic(() => import('./FAQs'), { ssr: false });
+const Contact      = dynamic(() => import('./Contact'), { ssr: false });
+const Register     = dynamic(() => import('./Register'), { ssr: false });
 
 const IMAGES = [
   { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/1.02464a56.png', bg: '#F4845F', panel: '#F79B7F' },

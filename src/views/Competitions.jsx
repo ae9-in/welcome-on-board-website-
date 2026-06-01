@@ -145,18 +145,7 @@ function CountdownDays({ days }) {
 }
 
 function AnimatedCount({ target }) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    const step = Math.ceil(target / 60);
-    const t = setInterval(() => {
-      setCount(c => {
-        if (c + step >= target) { clearInterval(t); return target; }
-        return c + step;
-      });
-    }, 20);
-    return () => clearInterval(t);
-  }, [target]);
-  return <span>{count.toLocaleString()}</span>;
+  return <span>{target.toLocaleString()}</span>;
 }
 
 export default function Competitions({ navigateTo, setSelectedComp, activeFigurineBg }) {
