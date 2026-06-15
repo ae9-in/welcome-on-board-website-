@@ -12,7 +12,6 @@ export default function WelcomeOnBoard({ navigateTo }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
-  const [loadedImages, setLoadedImages] = useState({});
 
   // Preload all 4 images on mount
   useEffect(() => {
@@ -180,12 +179,6 @@ export default function WelcomeOnBoard({ navigateTo }) {
                     role === 'center' ? 'animate-float' : ''
                   }`}
                   draggable="false"
-                  onLoad={() => setLoadedImages((prev) => ({ ...prev, [i]: true }))}
-                  style={{
-                    opacity: loadedImages[i] ? 1 : 0,
-                    filter: loadedImages[i] ? 'none' : 'blur(10px)',
-                    transition: 'opacity 1s cubic-bezier(0.4, 0, 0.2, 1), filter 1s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}
                 />
               </div>
             );

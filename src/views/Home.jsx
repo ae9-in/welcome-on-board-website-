@@ -21,7 +21,6 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [loadedImages, setLoadedImages] = useState({});
 
   // Set isMobile safely after mount (avoids SSR window crash)
   useEffect(() => {
@@ -202,12 +201,6 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
                       role === 'center' ? 'animate-float' : ''
                     }`}
                     draggable="false"
-                    onLoad={() => setLoadedImages((prev) => ({ ...prev, [i]: true }))}
-                    style={{
-                      opacity: loadedImages[i] ? 1 : 0,
-                      filter: loadedImages[i] ? 'none' : 'blur(10px)',
-                      transition: 'opacity 1s cubic-bezier(0.4, 0, 0.2, 1), filter 1s cubic-bezier(0.4, 0, 0.2, 1)',
-                    }}
                   />
                 </div>
               );
