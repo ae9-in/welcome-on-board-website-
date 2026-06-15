@@ -12,6 +12,7 @@ export default function WelcomeOnBoard({ navigateTo }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  const [loadedImages, setLoadedImages] = useState({});
 
   // Preload all 4 images on mount
   useEffect(() => {
@@ -44,6 +45,14 @@ export default function WelcomeOnBoard({ navigateTo }) {
     }, 650);
   };
 
+  // Auto-scroll (auto-rotate slides) every 3 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      navigate('next');
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [activeIndex, isAnimating]);
+
   return (
     <div
       className="relative w-full overflow-hidden"
@@ -73,11 +82,11 @@ export default function WelcomeOnBoard({ navigateTo }) {
             zIndex: 2,
             top: '18%',
             fontFamily: "'Anton', sans-serif",
-            fontSize: 'clamp(90px, 28vw, 380px)',
+            fontSize: 'clamp(70px, 16vw, 280px)',
             color: 'white',
             opacity: 1,
             lineHeight: 1,
-            letterSpacing: '-0.02em',
+            letterSpacing: '0.06em',
             whiteSpace: 'nowrap'
           }}
         >
@@ -154,7 +163,7 @@ export default function WelcomeOnBoard({ navigateTo }) {
               };
             }
 
-            return (
+             return (
               <div
                 key={i}
                 className="absolute aspect-[0.6/1]"
@@ -167,31 +176,27 @@ export default function WelcomeOnBoard({ navigateTo }) {
                 <img
                   src={img.src}
                   alt={`Toon figurine ${i + 1}`}
-                  className="w-full h-full object-contain object-bottom select-none"
+                  className={`w-full h-full object-contain object-bottom select-none transition-transform duration-1000 ${
+                    role === 'center' ? 'animate-float' : ''
+                  }`}
                   draggable="false"
+                  onLoad={() => setLoadedImages((prev) => ({ ...prev, [i]: true }))}
+                  style={{
+                    opacity: loadedImages[i] ? 1 : 0,
+                    filter: loadedImages[i] ? 'none' : 'blur(10px)',
+                    transition: 'opacity 1s cubic-bezier(0.4, 0, 0.2, 1), filter 1s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
                 />
               </div>
             );
           })}
         </div>
 
-        {/* 5. Bottom-left text + nav buttons */}
+        {/* 5. Bottom-left nav buttons */}
         <div
           className="absolute bottom-6 left-4 sm:bottom-20 sm:left-24 text-white"
-          style={{ zIndex: 60, maxWidth: '320px' }}
+          style={{ zIndex: 60 }}
         >
-          <p
-            className="font-bold uppercase tracking-widest mb-2 sm:mb-3 text-base sm:text-[22px]"
-            style={{ letterSpacing: '0.02em', opacity: 0.95 }}
-          >
-            TOONHUB FIGURINES
-          </p>
-          <p
-            className="hidden sm:block text-xs sm:text-sm mb-4 sm:mb-5"
-            style={{ opacity: 0.85, lineHeight: 1.6 }}
-          >
-            The artwork is stunning, shipped fully prepared. The finish is a vision, the 3D craft is flawless. Many thanks! Wishing you the win. Order now.
-          </p>
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('prev')}

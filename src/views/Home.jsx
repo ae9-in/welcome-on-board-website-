@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 
 const Competitions = dynamic(() => import('./Competitions'), { ssr: false });
 const About        = dynamic(() => import('./About'), { ssr: false });
-const Results      = dynamic(() => import('./Results'), { ssr: false });
 const Gallery      = dynamic(() => import('./Gallery'), { ssr: false });
 const Blog         = dynamic(() => import('./Blog'), { ssr: false });
 const FAQs         = dynamic(() => import('./FAQs'), { ssr: false });
@@ -22,6 +21,7 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [loadedImages, setLoadedImages] = useState({});
 
   // Set isMobile safely after mount (avoids SSR window crash)
   useEffect(() => {
@@ -56,6 +56,14 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
       setIsAnimating(false);
     }, 650);
   };
+
+  // Auto-scroll (auto-rotate slides) every 3 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      navigate('next');
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [activeIndex, isAnimating]);
 
   return (
     <div className="bg-[#070A13] text-white min-h-screen relative overflow-x-hidden">
@@ -111,11 +119,11 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
               zIndex: 2,
               top: '18%',
               fontFamily: "'Anton', sans-serif",
-              fontSize: 'clamp(90px, 28vw, 380px)',
+              fontSize: 'clamp(70px, 16vw, 280px)',
               color: 'white',
               opacity: 1,
               lineHeight: 1,
-              letterSpacing: '-0.02em',
+              letterSpacing: '0.06em',
               whiteSpace: 'nowrap'
             }}
           >
@@ -177,7 +185,7 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
                 };
               }
 
-              return (
+               return (
                 <div
                   key={i}
                   className="absolute aspect-[0.6/1]"
@@ -190,31 +198,27 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
                   <img
                     src={img.src}
                     alt={`Toon figurine ${i + 1}`}
-                    className="w-full h-full object-contain object-bottom select-none"
+                    className={`w-full h-full object-contain object-bottom select-none transition-transform duration-1000 ${
+                      role === 'center' ? 'animate-float' : ''
+                    }`}
                     draggable="false"
+                    onLoad={() => setLoadedImages((prev) => ({ ...prev, [i]: true }))}
+                    style={{
+                      opacity: loadedImages[i] ? 1 : 0,
+                      filter: loadedImages[i] ? 'none' : 'blur(10px)',
+                      transition: 'opacity 1s cubic-bezier(0.4, 0, 0.2, 1), filter 1s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
                   />
                 </div>
               );
             })}
           </div>
 
-          {/* Bottom-left text + nav buttons */}
+          {/* Bottom-left nav buttons */}
           <div
             className="absolute bottom-6 left-4 sm:bottom-20 sm:left-24 text-white"
-            style={{ zIndex: 60, maxWidth: '320px' }}
+            style={{ zIndex: 60 }}
           >
-            <p
-              className="font-bold uppercase tracking-widest mb-2 sm:mb-3 text-base sm:text-[22px]"
-              style={{ letterSpacing: '0.02em', opacity: 0.95 }}
-            >
-              TOONHUB FIGURINES
-            </p>
-            <p
-              className="hidden sm:block text-xs sm:text-sm mb-4 sm:mb-5"
-              style={{ opacity: 0.85, lineHeight: 1.6 }}
-            >
-              The artwork is stunning, shipped fully prepared. The finish is a vision, the 3D craft is flawless. Many thanks! Wishing you the win. Order now.
-            </p>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate('prev')}
@@ -270,10 +274,6 @@ export default function Home({ navigateTo, setSelectedComp, selectedComp }) {
 
         <section id="about" className="border-t border-white/[0.05]">
           <About navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
-        </section>
-
-        <section id="results" className="border-t border-white/[0.05]">
-          <Results navigateTo={navigateTo} activeFigurineBg={IMAGES[activeIndex].bg} />
         </section>
 
         <section id="gallery" className="border-t border-white/[0.05]">

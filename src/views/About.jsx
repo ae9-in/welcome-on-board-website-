@@ -45,49 +45,6 @@ export default function About({ activeFigurineBg }) {
         </div>
       </section>
 
-      {/* 2. HISTORY / STORY */}
-      <section className="mb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white border border-black/10 rounded-[2rem] p-8 sm:p-12 shadow-xl shadow-slate-900/5">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              <div className="lg:col-span-6 space-y-6">
-                <h3 className="font-poppins text-3xl font-extrabold text-[#030213]">
-                  A Platform Built on Passion & Play
-                </h3>
-                <p className="text-slate-700 text-sm leading-relaxed font-semibold">
-                  OnBoarding was established in 2021 when a small team of educators noticed a lack of standardized online engagement during school recesses. Recognizing that children thrive under well-designed gamified goals, we built a secure platform dedicated exclusively to students from Kindergarten (KG) to 10th Standard.
-                </p>
-                <p className="text-slate-700 text-sm leading-relaxed font-semibold">
-                  Our initial event started with just 100 students in a local handwriting test. Today, we have successfully managed over 50,000 registrations globally, giving children the ability to compete against national cohorts from their living rooms.
-                </p>
-              </div>
-
-              <div className="lg:col-span-6 flex justify-center">
-                <div className="w-full max-w-md bg-[#F6F7FA] rounded-[2rem] p-8 text-slate-800 relative shadow-md overflow-hidden border border-black/10">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl"></div>
-                  <h3 className="font-poppins font-black text-base mb-6 text-[#030213] tracking-wide">OnBoarding Milestones</h3>
-                  <div className="space-y-6">
-                    {[
-                      { year: '2021', title: 'Platform Inception', detail: 'Launched with a local handwriting and vocabulary contest.' },
-                      { year: '2023', title: '50,000+ Participants', detail: 'Expanded categories to cover standard arithmetic and crafts.' },
-                      { year: '2026', title: '15+ Countries Reached', detail: 'Recognized as a leading secure kid-friendly contest host.' }
-                    ].map((mile, idx) => (
-                      <div key={idx} className="flex space-x-4">
-                        <span className="font-poppins font-black text-xl text-indigo-600">{mile.year}</span>
-                        <div className="text-left">
-                          <h4 className="font-bold text-xs sm:text-sm text-[#030213]">{mile.title}</h4>
-                          <p className="text-xs text-slate-600 font-semibold mt-0.5">{mile.detail}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* 3. MISSION & VISION */}
       <section className="mb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -18,7 +18,6 @@ export default function Navbar({ currentPage, navigateTo }) {
     { id: 'home', label: 'Home' },
     { id: 'competitions', label: 'Competitions' },
     { id: 'about', label: 'About Us' },
-    { id: 'results', label: 'Results' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'blog', label: 'Blog' },
     { id: 'faqs', label: 'FAQs' },
@@ -70,7 +69,7 @@ export default function Navbar({ currentPage, navigateTo }) {
                 }
                 style={{ fontFamily: "'Anton', sans-serif", lineHeight: 1 }}
               >
-                On<span className={isOverlay ? 'text-white' : 'text-black'}>Boarding</span>
+                Welcome On<span className={isOverlay ? 'text-white' : 'text-black'}> Board</span>
               </span>
               <div
                 className={

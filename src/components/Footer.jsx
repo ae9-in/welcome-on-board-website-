@@ -31,8 +31,8 @@ export default function Footer({ navigateTo }) {
               <div className="bg-gradient-to-tr from-blue-600 via-indigo-600 to-amber-400 p-2 rounded-xl shadow-md transform group-hover:rotate-6 transition-transform">
                 <Award className="h-6 w-6 text-white" />
               </div>
-              <span className="text-2xl tracking-wider uppercase text-[#030213]" style={{ fontFamily: "'Anton', sans-serif" }}>
-                On<span className="text-black">Boarding</span>
+              <span className="text-2xl tracking-wider uppercase text-white" style={{ fontFamily: "'Anton', sans-serif" }}>
+                Welcome On<span className="text-black"> Board</span>
               </span>
             </div>
             <p className="text-sm leading-relaxed text-slate-400">
@@ -42,7 +42,7 @@ export default function Footer({ navigateTo }) {
               {['facebook', 'twitter', 'instagram', 'youtube'].map((social) => (
                 <a
                   key={social}
-                  href={`#${social}`}
+                  href={`#social`}
                   className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-amber-400 hover:text-slate-900 text-slate-400 flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1"
                 >
                   <i className={`fab fa-${social} text-lg`}></i>
@@ -65,7 +65,6 @@ export default function Footer({ navigateTo }) {
                 { id: 'home', label: 'Home' },
                 { id: 'competitions', label: 'Competitions' },
                 { id: 'about', label: 'About Us' },
-                { id: 'results', label: 'Competition Results' },
                 { id: 'gallery', label: 'Student Gallery' },
                 { id: 'blog', label: 'Blogs & Articles' },
                 { id: 'faqs', label: 'FAQs' },
@@ -155,28 +154,35 @@ export default function Footer({ navigateTo }) {
             <Phone className="w-5 h-5 text-amber-400" />
             <div>
               <span className="block text-[10px] uppercase font-bold text-indigo-400">Call/WhatsApp</span>
-              <a href="tel:+18005559876" className="text-white hover:text-amber-400 font-semibold font-poppins">+1 (800) 555-9876</a>
+              <a href="tel:8088372031" className="text-white hover:text-amber-400 font-semibold font-poppins">8088372031</a>
             </div>
           </div>
           <div className="flex items-center space-x-3 bg-slate-800/40 p-3.5 rounded-2xl border border-slate-800/80">
             <Mail className="w-5 h-5 text-indigo-400" />
             <div>
               <span className="block text-[10px] uppercase font-bold text-indigo-400">Direct Email</span>
-              <a href="mailto:support@onboarding.com" className="text-white hover:text-indigo-400 font-semibold font-poppins">support@onboarding.com</a>
+              <a href="mailto:connect@welcomeonboard.in" className="text-white hover:text-indigo-400 font-semibold font-poppins">connect@welcomeonboard.in</a>
             </div>
           </div>
           <div className="flex items-center space-x-3 bg-slate-800/40 p-3.5 rounded-2xl border border-slate-800/80">
             <MapPin className="w-5 h-5 text-emerald-400" />
             <div>
-              <span className="block text-[10px] uppercase font-bold text-indigo-400">Global Head Office</span>
-              <span className="text-white font-semibold font-poppins">California, USA</span>
+              <span className="block text-[10px] uppercase font-bold text-indigo-400">Office Address</span>
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=Behive+trinity+circle%2C+Brigade+Road" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="text-white hover:text-emerald-400 font-semibold font-poppins"
+              >
+                Behive trinity circle, Brigade Road
+              </a>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-800 pt-8 mt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} OnBoarding Online Competitions. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Welcome On Board Online Competitions. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 sm:mt-0 font-medium">
             <a href="#privacy" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#terms" className="hover:text-white transition-colors">Terms of Service</a>

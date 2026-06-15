@@ -25,7 +25,7 @@ export default function FAQs() {
     },
     {
       q: 'Is there a support channel for registration errors?',
-      a: 'Yes, absolutely! We provide instant WhatsApp support (available by clicking the chat balloon on the bottom-right of the page), a toll-free hotline (+1 800-555-9876), and direct support desk mail (support@onboarding.com).'
+      a: 'Yes, absolutely! We provide instant WhatsApp support (available by clicking the chat balloon on the bottom-right of the page), a direct support line (8088372031), and direct support desk mail (connect@welcomeonboard.in).'
     }
   ];
 
@@ -105,7 +105,7 @@ export default function FAQs() {
           </p>
           <div className="flex justify-center pt-2">
             <a
-              href="mailto:support@onboarding.com"
+              href="mailto:connect@welcomeonboard.in"
               className="bg-[#030213] hover:bg-slate-805 hover:bg-slate-800 text-white font-extrabold py-3.5 px-6 rounded-full text-xs tracking-wider uppercase transition-all shadow-md active:scale-95 inline-block cursor-pointer"
             >
               Email Support Desk

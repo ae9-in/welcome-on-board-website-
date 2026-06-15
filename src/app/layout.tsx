@@ -29,11 +29,11 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
-  title: 'OnBoarding — Competitions for KG to Grade 11',
+  title: 'Welcome On Board — Competitions for KG to Grade 11',
   description: 'Gamified digital spelling, art, handwriting & quiz competitions for school students.',
   keywords: ['spell bee', 'school quiz', 'handwriting competition', 'art competition', 'student competitions'],
   openGraph: {
-    title: 'OnBoarding — School Competitions',
+    title: 'Welcome On Board — School Competitions',
     description: 'Gamified digital competitions for school students from KG to Grade 11.',
     type: 'website',
   },

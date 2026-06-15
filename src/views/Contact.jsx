@@ -71,19 +71,19 @@ export default function Contact() {
               
               {/* WhatsApp card */}
               <a 
-                href="https://api.whatsapp.com/send?phone=18005559876&text=Hello%20OnBoarding%20Support!"
+                href="https://api.whatsapp.com/send?phone=918088372031&text=Hello%20Welcome%20On%20Board%20Support!"
                 target="_blank"
                 rel="noreferrer"
-                className="block bg-emerald-50 border border-emerald-205 border-emerald-200 p-6 rounded-[2rem] hover:bg-emerald-100/50 transition-all text-left shadow-xl shadow-slate-900/5"
+                className="block bg-emerald-50 border border-emerald-200 p-6 rounded-[2rem] hover:bg-emerald-100/50 transition-all text-left shadow-xl shadow-slate-900/5"
               >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-md">
                     <MessageSquare className="w-6 h-6 animate-pulse" />
                   </div>
                   <div>
-                    <h3 className="font-poppins font-bold text-base text-emerald-805 text-emerald-800">Chat on WhatsApp</h3>
+                    <h3 className="font-poppins font-bold text-base text-emerald-800">Chat on WhatsApp</h3>
                     <p className="text-xs text-slate-500 font-semibold mt-0.5">Quick responses for rule sheets.</p>
-                    <span className="block text-emerald-700 font-bold text-sm mt-2 font-poppins">+1 (800) 555-9876</span>
+                    <span className="block text-emerald-700 font-bold text-sm mt-2 font-poppins">8088372031</span>
                   </div>
                 </div>
               </a>
@@ -99,7 +99,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <span className="block text-[10px] uppercase font-bold text-slate-400">Direct Hotline</span>
-                      <a href="tel:+18005559876" className="text-[#030213] hover:text-indigo-600 font-bold font-poppins">+1 (800) 555-9876</a>
+                      <a href="tel:8088372031" className="text-[#030213] hover:text-indigo-600 font-bold font-poppins">8088372031</a>
                     </div>
                   </div>
 
@@ -110,7 +110,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <span className="block text-[10px] uppercase font-bold text-slate-400">Email Support</span>
-                      <a href="mailto:support@onboarding.com" className="text-[#030213] hover:text-indigo-600 font-bold font-poppins">support@onboarding.com</a>
+                      <a href="mailto:connect@welcomeonboard.in" className="text-[#030213] hover:text-indigo-600 font-bold font-poppins">connect@welcomeonboard.in</a>
                     </div>
                   </div>
 
@@ -120,31 +120,21 @@ export default function Contact() {
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="block text-[10px] uppercase font-bold text-slate-400">Global Head Office</span>
-                      <span className="text-[#030213] font-bold font-poppins">100 Academic Circle, San Francisco, CA, USA</span>
+                      <span className="block text-[10px] uppercase font-bold text-slate-400">Office Address</span>
+                      <a 
+                        href="https://www.google.com/maps/search/?api=1&query=Behive+trinity+circle%2C+Brigade+Road" 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="text-[#030213] hover:text-indigo-600 font-bold font-poppins"
+                      >
+                        Behive trinity circle, Brigade Road
+                      </a>
                     </div>
                   </div>
 
                 </div>
               </div>
 
-            </div>
-
-            {/* Simulated Modern Map Element */}
-            <div className="bg-slate-50 border border-black/10 text-slate-800 rounded-[2rem] p-6 relative overflow-hidden shadow-xl shadow-slate-900/5 h-48 flex flex-col justify-between">
-              <div className="absolute top-1/2 left-1/3 transform -translate-y-1/2 w-4 h-4 bg-indigo-600 rounded-full animate-ping z-10" />
-              <div className="absolute top-1/2 left-1/3 transform -translate-y-1/2 w-2 h-2 bg-indigo-600 rounded-full z-10" />
-              
-              <div className="relative z-10 text-left">
-                <span className="text-[10px] uppercase tracking-widest text-indigo-600 font-black">Interactive Workspace Map</span>
-                <h4 className="font-poppins font-black text-sm text-[#030213] mt-1">OnBoarding HQ Campus</h4>
-                <p className="text-[11px] text-slate-550 text-slate-500 mt-0.5">San Francisco, California</p>
-              </div>
-
-              <div className="relative z-10 text-[10px] text-indigo-700 bg-white py-2 px-3 rounded-xl border border-black/10 self-start flex items-center space-x-1.5 font-semibold">
-                <MapPin className="w-3.5 h-3.5" />
-                <span>Digital Geo-Code: 37.7749° N, 122.4194° W</span>
-              </div>
             </div>
 
           </div>
